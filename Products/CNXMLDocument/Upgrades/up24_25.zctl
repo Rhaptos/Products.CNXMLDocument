@@ -1,0 +1,2 @@
+app.plone.portal_quickinstaller.reinstallProducts(['CNXMLDocument'])
+get_transaction().commit()

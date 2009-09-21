@@ -1,0 +1,4 @@
+[actions]
+action.success = redirect_to:string:cnxml_importexport
+action.failure = traverse_to:string:cnxml_importexport
+

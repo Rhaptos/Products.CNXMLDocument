@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:metal="http://xml.zope.org/namespaces/metal" 
+      xmlns:tal="http://xml.zope.org/namespaces/tal" 
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xml:lang="en-US" lang="en-US"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="rhaptos">
+
+<tal:comment tal:replace="nothing">
+  i18n by lizzardg
+  I believe this file is no longer in use (maxwell)
+</tal:comment>
+
+  <body>
+
+    <div metal:fill-slot="main">
+
+      <h1 i18n:translate="header_editform_edit_cnxml_file">Edit CNXML File: <span i18n:name="module" tal:replace="structure here/id">Module</span></h1>
+
+      <!-- request.saveaction will exist iif the page results from a form submission -->
+      <span tal:condition="exists:request/saveaction" tal:replace="here/cnxml_editText" />
+
+      <!-- begin form, spread around in various table cells -->
+      <form name="edit_form" method="post" enctype="multipart/form-data"
+	    tal:attributes="action python:here.portal_form_url(template.id)" >
+	    
+	<input type="hidden" name="filename" tal:attributes="value here/getId" />
+	      
+	<table width="100%" cellpadding="10" cellspacing="0">
+	  <tr valign="top">
+	    <td>
+	      <!-- if this is a fresh page load, turn on the validate checkbox -->
+	      <span tal:condition="not:exists:request/saveaction">
+		<span tal:define="dummy python:request.set('validate','checked')" />
+	      </span>
+
+	      <!--check if needs validating-->
+	      <div tal:condition="exists:request/validate">
+		<div tal:define="errors here/validate; boxcolor python:test(errors,'FFE0E0', 'E0FFE0')"
+		  tal:attributes="style string:background-color: #${boxcolor};; font-face: fixed-width;; padding: 5px;; border-width: 1;; border-color: black;;">
+		  <b i18n:translate="label_editform_validation_results">Validation results:</b>
+		  <span i18n:translate="text_editform_fileok" tal:condition="not:errors">File OK</span>
+		  <p tal:repeat="e errors">
+		    <!-- i18n:FIXME the line numbers and error messages are auto-generated English messages -->
+		    <a tal:define="line python:e[0]" tal:attributes="href string:module_source?line:int=${line}#l${line}">
+		      <span><b i18n:translate="text_cnxml_error_line">Line 
+			  <span tal:replace="line" i18n:name="line_number"/></b></span></a>:
+		    <span><span tal:replace="python:e[1]">[Error message]</span></span>
+		  </p>
+		</div>
+	      </div>
+	      <!-- end validation bar -->
+
+	      <!-- upload/download part of the form -->
+	      <div style="background-color: #E0E0E0; padding: 5px;">
+		<font size="-1"><i><b i18n:translate="text_editform_editbydownup">Edit by Download/Upload</b></i></font>
+		<table border="0" width="100%">
+		  <tr>
+		    <td>
+		      <a i18n:translate="label_editform_downcopy" tal:attributes="href string:${here/id}/cnxml_download">Download a copy</a></td>
+		    <td align="right">
+		      <input type="file" name="uploadedFile" size="25" />
+		      <input i18n:attributes="value value_editform_upload_file" class="context uploadButton" type="submit" name="saveaction" value="Upload File" />
+		    </td>
+		  </tr>
+		</table>
+	      </div>
+
+	      <!-- Textarea part of the form -->
+	      <div tal:define="textareawidth request/textareawidth | string:80;
+                               textareaheight request/textareaheight | string:25">
+		<table>
+		  <tr>
+		    <td><font size="-1"><i><b i18n:translate="text_editform_editdirectly">Edit Directly</b></i></font></td>
+		    <td i18n:translate="label_editform_validatesave" align="right">
+		      <span i18n:name="checkbox">
+			<input type="checkbox" name="validate" value="checked"
+			       tal:attributes="checked request/validate | nothing" />
+		      </span> Validate during save
+		    </td>
+		  </tr>
+		  <tr>
+		    <td colspan="2">
+                   <textarea name="textareaContents:text" wrap="on"
+                             style="width:auto"
+                             tal:attributes="cols textareawidth;
+                                             rows textareaheight"
+                             cols="80" rows="25"><span tal:replace="python:here.getSource()">content</span></textarea>
+		    </td>
+		  </tr>
+		  <tr>
+                <td>
+                  <input i18n:attributes="value value_editform_save" class="context" type="submit" name="saveaction" value="Save" />
+                </td>
+                <!--<td align="right">
+                  Height: <input type="text"
+                                  name="textareaheight" size="4"
+                                  tal:attributes="value textareaheight" />
+                  Width:  <input type="text"
+                                 name="textareawidth" size="4"
+                                 tal:attributes="value textareawidth" />
+                </td>-->
+		  </tr>
+		</table>
+	      </div>
+	    </td>
+	  </tr>
+	</table>
+	
+	<input type="hidden" name="form_submitted" value="1" tal:attributes="value template/id" />
+      </form>
+    </div>
+  </body>
+</html>

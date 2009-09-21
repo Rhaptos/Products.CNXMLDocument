@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:metal="http://xml.zope.org/namespaces/metal" 
+      xmlns:tal="http://xml.zope.org/namespaces/tal" 
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n" 
+      xml:lang="en-US" 
+      lang="en-US"
+      metal:use-macro="here/main_template/macros/master"
+      i18n:domain="rhaptos">
+<tal:comment tal:replace="nothing">
+	i18n by lizzardg
+	i don't believe this template is any longer in use (maxwell)
+</tal:comment>
+  <body>
+    <div metal:fill-slot="main">
+
+      <h1 i18n:translate="header_impexp_impexp">Import/Export: <span i18n:name="moduleid" tal:replace="structure 
+here/getId">Module</span></h1>
+
+      <tal:block tal:condition="python:here.doctype.find('0.5') != -1">
+      <h2 i18n:translate="header_impexp_expmodule">Export Module</h2>
+      <form name="export" tal:attributes="action string:${here/absolute_url}/cnxml_export">
+	<p i18n:translate="text_impexp_export">
+	  Export CNXML for editing in <span i18n:name="altova"><a i18n:translate="label_impexp_altova" 
+	  href="http://www.altova.com">Altova's</a></span> XMLSpy/Authentic
+	  editor.
+	</p>
+<!--      <select name="format">
+	<option i18n:translate="label_impexp_export_xmlspyauth" selected="selected" value="authentic">XMLSpy/Authentic</option>
+	<option value="plain" i18n:translate="label_impexp_export_plainxml">Plain CNXML</option>
+      </select>-->
+	<input type="hidden" name="format" value="authentic"/>
+	<input class="standalone" type="submit" name="export" value="Export" i18n:attributes="value value_impexp_export_button"/>
+      </form>
+
+      <hr />
+
+      <h2 i18n:translate="header_impexp_importmodule">Import Module</h2>
+      <form name="import" method="post" enctype="multipart/form-data" tal:attributes="action string:${here/absolute_url}/cnxml_import">
+	<p i18n:translate="text_impexp_import_xmlspyauth">
+	  Import CNXML text from the XMLSpy/Authentic format
+	</p>
+<!--      <select name="format">
+	<option i18n:translate="label_impexp_import_xmlspyauth" selected="selected" 
+value="authentic">XMLSpy/Authentic</option>
+	<option i18n:translate="label_impexp_import_plainxml" value="plain">Plain CNXML</option>
+      </select>-->
+	<input type="hidden" name="format" value="authentic"/>
+	<input type="file" name="importFile" size="25" />
+	<input class="context uploadButton" type="submit" name="import" value="Import" i18n:attributes="value value_impexp_import_button"/>
+      </form>
+      </tal:block>
+      
+      <tal:block tal:condition="python:here.doctype.find('0.5') == -1">
+	<p i18n:translate="text_impexp_cnxml05">Sorry, this feature is only available for <a
+	tal:attributes="href string:${portal_url}/technology/cnxml/0.5" href="/technology/cnxml/0.5">CNXML 0.5</a> and above.
+	</p>
+      </tal:block>
+    </div>
+  </body>
+</html>

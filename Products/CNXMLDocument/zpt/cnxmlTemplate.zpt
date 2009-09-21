@@ -1,0 +1,23 @@
+<?xml version="1.0" standalone="no"?>
+<tal:root xmlns:tal="http://xml.zope.org/namespaces/tal">
+<document xmlns="http://cnx.rice.edu/cnxml"
+          xmlns:md="http://cnx.rice.edu/mdml/0.4"
+          xmlns:bib="http://bibtexml.sf.net/"
+          xmlns:m="http://www.w3.org/1998/Math/MathML"
+          xmlns:q="http://cnx.rice.edu/qml/1.0"
+          cnxml-version="0.6"
+          tal:attributes="id options/objectId;
+                          module-id options/objectId">
+
+<title tal:content="options/title | string:CNXML">[title]</title>
+<metadata xmlns:md="http://cnx.rice.edu/mdml/0.4">
+       <!-- will be filled by metadataTemplate later -->
+</metadata>
+<content>
+  <para id="delete_me">
+     <!-- Insert module text here -->
+  </para>
+</content>
+
+</document>
+</tal:root>

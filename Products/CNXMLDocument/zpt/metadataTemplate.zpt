@@ -1,0 +1,105 @@
+<metadata xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:metal="http://xml.zope.org/namespaces/metal"
+          xmlns:md="http://cnx.rice.edu/mdml/0.4">
+  <!-- WARNING! The 'metadata' section is read only. Do not edit below.
+       Changes to the metadata section in the source will not be saved. -->
+  <md:content-id tal:define="oid options/objectId"
+                 tal:content="python:oid or 'new'">[content-id]</md:content-id>
+  <md:title tal:content="options/title">[title]</md:title>
+  <md:version tal:content="options/version">[version]</md:version>
+  <md:created tal:content="options/created">[date of creation]</md:created>
+  <md:revised tal:content="options/revised">[date of revision]</md:revised>
+
+  <md:authorlist tal:condition="options/authors">
+    <md:author tal:repeat="p python:map(here.desecured.getMemberById, options['authors'])"
+               tal:attributes="id p/getUserName">
+      <tal:common metal:define-macro="name">
+        <md:firstname tal:content="python:p.getProperty('firstname')">[firstname]</md:firstname>
+        <md:othername tal:define="othername python:p.getProperty('othername')"
+                      tal:condition="othername" tal:content="othername">[middle name]</md:othername>
+        <md:surname tal:content="python:p.getProperty('surname')">[lastname]</md:surname>
+        <md:fullname tal:content="python:p.getProperty('fullname')">Full Q Name</md:fullname>
+        <md:email tal:define="email python:p.getProperty('email')"
+                  tal:condition="email"
+                  tal:content="email">[email]</md:email>
+      </tal:common>
+    </md:author>
+  </md:authorlist>
+  <md:maintainerlist>
+    <md:maintainer tal:repeat="p python:map(here.desecured.getMemberById, options['maintainers'])"
+                   tal:attributes="id p/getUserName">
+      <tal:inclname metal:use-macro="template/macros/name" />
+    </md:maintainer>
+  </md:maintainerlist>
+  <md:editorlist tal:define="editors options/roles/editors | nothing"
+                 tal:condition="editors">
+    <md:editor tal:repeat="p python:map(here.desecured.getMemberById, editors)"
+                   tal:attributes="id p/getUserName">
+      <tal:inclname metal:use-macro="template/macros/name" />
+    </md:editor>
+  </md:editorlist>
+  <md:translatorlist tal:define="translators options/roles/translators | nothing"
+                     tal:condition="translators">
+    <md:translator tal:repeat="p python:map(here.desecured.getMemberById, translators)"
+                   tal:attributes="id p/getUserName">
+      <tal:inclname metal:use-macro="template/macros/name" />
+    </md:translator>
+  </md:translatorlist>
+
+  <md:license href="http://creativecommons.org/licenses/by/2.0/"
+              tal:attributes="href options/license" />
+
+  <md:licensorlist>
+    <md:licensor tal:repeat="p python:map(here.desecured.getMemberById, options['licensors'])"
+                 tal:attributes="id p/getUserName">
+      <tal:inclname metal:use-macro="template/macros/name" />
+    </md:licensor>
+  </md:licensorlist>
+
+  <tal:comment replace="nothing">
+      extended attribution not landed yet. it will have to fill this in when it is done.
+  </tal:comment>
+  <md:extended-attribution tal:condition="options/extentedattribution | nothing">
+    <link-group type="Cheerleaders">
+      <link url="http://dpsanish.org/">DSpanish Project</link>
+    </link-group>
+  </md:extended-attribution>
+
+  <md:parent-module tal:define="parent options/parent"
+                    tal:condition="parent"
+                    tal:attributes="href parent/href"
+                    href="http://cnx.org/content/m10096/2.10/">
+    <md:content-id tal:content="parent/objectId">[content-id]</md:content-id>
+    <md:title tal:content="parent/title">[title]</md:title>
+    <md:authorlist tal:define="parentauthors parent/authors">
+      <md:author tal:repeat="p python:map(here.desecured.getMemberById, parentauthors)"
+                 tal:attributes="id p/getUserName">
+        <tal:inclname metal:use-macro="template/macros/name" />
+      </md:author>
+    </md:authorlist>
+
+    <md:license href="http://creativecommons.org/licenses/by/2.0/"
+                tal:attributes="href parent/license" />
+
+    <md:licensorlist tal:define="parentlicensors parent/licensors">
+      <md:licensor tal:repeat="p python:map(here.desecured.getMemberById, parentlicensors)"
+                   tal:attributes="id p/getUserName">
+        <tal:inclname metal:use-macro="template/macros/name" />
+      </md:licensor>
+    </md:licensorlist>
+  </md:parent-module>
+
+  <md:keywordlist tal:condition="options/keywords">
+    <md:keyword tal:repeat="keyword options/keywords" tal:content="keyword">[keyword]</md:keyword>
+  </md:keywordlist>
+
+  <md:subjectlist tal:condition="options/subject">
+    <md:subject tal:repeat="subject options/subject" tal:content="subject">Science</md:subject>
+  </md:subjectlist>
+
+  <md:abstract tal:content="options/abstract">[Module abstract]</md:abstract>
+
+  <md:language tal:content="options/language">es</md:language>
+  <!-- WARNING! The 'metadata' section is read only. Do not edit above.
+       Changes to the metadata section in the source will not be saved. -->
+</metadata>

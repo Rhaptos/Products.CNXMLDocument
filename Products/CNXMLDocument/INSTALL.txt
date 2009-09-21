@@ -1,0 +1,6 @@
+INSTALL for CNXMLDocument
+
+Should be installed along with other Rhaptos products; may perhaps be installed along with
+QuickInstaller install.
+
+Has several dependencies; see README.txt for details of other products to install prior first.

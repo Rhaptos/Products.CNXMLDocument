@@ -1,0 +1,29 @@
+<featured-links xmlns:tal="http://xml.zope.org/namespaces/tal"
+                xmlns:metal="http://xml.zope.org/namespaces/metal"
+                tal:define="categories options/categories;"
+                tal:condition="categories">
+  <!-- WARNING! The 'featured-links' section is read only. Do not edit below.
+       Changes to the links section in the source will not be saved. -->
+  <tal:outer tal:repeat="group categories/items">
+    <link-group type="example"
+                tal:define="type python:group[0];
+                            info python:group[1]"
+                tal:attributes="type type">
+      <label tal:condition="info/label"
+             tal:content="info/label">
+        Certifications available
+      </label>
+      <link tal:repeat="link info/links"
+            url="http://tinyurl.com/something" strength="2" document="m10882" version="latest"
+            tal:content="link/title"
+            tal:attributes="strength link/strength | nothing;
+                            url link/url | nothing;
+                            document link/document | nothing;
+                            version link/version | nothing">
+        First Certification
+      </link>
+    </link-group>
+  </tal:outer>
+  <!-- WARNING! The 'featured-links' section is read only. Do not edit above.
+       Changes to the links section in the source will not be saved. -->
+</featured-links>

@@ -1,0 +1,133 @@
+/*
+  CSS for simulating MathML on browsers that don't support it
+
+  This is derived from David Carlisle's universal MathML stylesheet
+  See http://www.w3.org/Math/XSL/
+  
+  Use and distribution of this code are permitted under the terms of the
+  W3C Software Notice and License. See LICENSE.W3C for details.
+*/
+
+.msubsup {
+/*background-color: red;*/
+font-size: 80%;
+position: absolute;
+}
+
+.munderover {
+display: inline-table;
+vertical-align: middle;
+}
+
+/* Hack for IE since it doesn't grok inline-table */
+* html table.munderover{ display:inline }
+
+	
+.lr {
+display: inline;
+vertical-align: middle;
+}
+
+.mi {
+font-style: serif;
+}
+
+
+.mspace{
+display: inline;
+}
+.mtext {
+font-style: serif;
+}
+.ms {
+font-style: monospace;
+}
+
+.mi1 {
+font-style: italic;
+}
+
+.doublestruck {
+font-family:  castellar, algerian,niagara engraved;
+}
+.mo {
+padding-right: .3em;
+padding-left: .3em;
+}
+
+.mn {
+}
+
+.msqrt {
+border-style: solid;
+border-color: black;
+border-width: .1em 0pt 0pt .1em;
+padding-left: .2em;
+margin-left: 0em;
+margin-top: .2em;
+display: inline;
+}
+
+.actuarial {
+border-style: solid;
+border-color: black;
+border-width: .1em .1em 0pt 0pt ;
+padding-right: .2em;
+margin-right: 0em;
+margin-top: .2em;
+display: inline;
+}
+
+.ssa {
+ position:relative; top:+0.5ex;  
+width: 0pt;
+color: red;
+}
+
+
+.mover {
+margin: 0pt;
+padding: 0pt;
+display: inline;
+vertical-align: middle;
+text-align: center;
+}
+
+.mtable {
+display: inline;
+vertical-align: middle;
+}
+
+
+.mfrac {
+text-align: center;
+display:inline-table;
+vertical-align: middle;
+}
+
+/* Hack for IE since it doesn't grok inline-table */
+* html table.mfrac{ display:inline }
+
+.mfraca {
+vertical-align: bottom;
+}
+
+.mfracaa {
+border-width: 0em 0em .2ex 0em ; border-style: solid;
+   border-color: black;
+}
+
+
+.mfracb {
+vertical-align: top;
+}
+
+.merror{
+background-color: white  ;
+border-style: solid;
+border-color: #FF0000;
+color: #FF0000;
+}
+.mphantom{
+visibility: hidden;
+}
