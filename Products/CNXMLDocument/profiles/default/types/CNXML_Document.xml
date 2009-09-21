@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<object name="CNXML Document" meta_type="Factory-based Type Information"
+   xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+ <property name="title"></property>
+ <property
+    name="description">A CNXML Document is a text file formatted in Connexions Markup Language.</property>
+ <property name="content_icon">file_icon.gif</property>
+ <property name="content_meta_type">CMF CNXML File</property>
+ <property name="product">CNXMLDocument</property>
+ <property name="factory">addCNXMLFile</property>
+ <property name="immediate_view">file_edit_form</property>
+ <property name="global_allow">True</property>
+ <property name="filter_content_types">True</property>
+ <property name="allowed_content_types"/>
+ <property name="allow_discussion">False</property>
+ <alias from="view" to="(Default)"/>
+ <action title="View" action_id="view" category="object" condition_expr=""
+    url_expr="string:${object_url}/file_view" visible="True">
+  <permission value="Modify portal content"/>
+ </action>
+ <action title="Download" action_id="download" category="object"
+    condition_expr="" url_expr="string:${object_url}" visible="True">
+  <permission value="Modify portal content"/>
+ </action>
+ <action title="Edit" action_id="edit" category="object" condition_expr=""
+    url_expr="string:${object_url}/file_edit_form" visible="True">
+  <permission value="Modify portal content"/>
+ </action>
+ <action title="Import/Export" action_id="importexport" category="object"
+    condition_expr="" url_expr="string:${object_url}/cnxml_importexport"
+    visible="False">
+  <permission value="Modify portal content"/>
+ </action>
+ <action title="Preview" action_id="preview" category="object"
+    condition_expr="" url_expr="string:${object_url}/../module_view"
+    visible="False">
+  <permission value="Modify portal content"/>
+ </action>
+ <action title="External Edit" action_id="external_edit" category="object"
+    condition_expr="" url_expr="string:${object_url}/external_edit"
+    visible="False">
+  <permission value="Modify portal content"/>
+ </action>
+</object>
+
