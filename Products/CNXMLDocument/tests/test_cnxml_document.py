@@ -24,17 +24,21 @@ $Id: $
 """
 
 
+from Products.RhaptosTest import config
 import Products.CNXMLDocument
+config.products_to_load_zcml = [('configure.zcml', Products.CNXMLDocument),]
+config.products_to_install = ['CNXMLDocument']
 
-from Products.RhaptosTest.base import RhaptosTestCase
+from Products.RhaptosTest import base
 
 
-class TestCNXMLDocument(RhaptosTestCase):
+class TestCNXMLDocument(base.RhaptosTestCase):
 
-    products_to_load_zcml = [('configure.zcml', Products.CNXMLDocument),]
+    def afterSetUp(self):
+        pass
 
-    def setUp(self):
-        RhaptosTestCase.setUp(self)
+    def beforeTearDown(self):
+        pass
 
     def test_portal_cnxml_file(self):
         self.assertEqual(1, 1)
