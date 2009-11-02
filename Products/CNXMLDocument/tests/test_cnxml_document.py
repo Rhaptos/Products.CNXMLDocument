@@ -28,7 +28,11 @@ from Products.RhaptosTest import config
 import Products.CNXMLDocument
 config.products_to_load_zcml = [('configure.zcml', Products.CNXMLDocument),]
 config.products_to_install = ['CNXMLDocument']
+config.extension_profiles = ['Products.CNXMLDocument:default']
 
+from Products.CNXMLDocument.CNXMLFile import CNXMLFile
+from Products.CNXMLDocument.interfaces.ICNXMLFile import ICNXMLFile
+from Products.CNXMLDocument.interfaces.IParameterManager import IParameterManager
 from Products.RhaptosTest import base
 
 
@@ -39,6 +43,11 @@ class TestCNXMLDocument(base.RhaptosTestCase):
 
     def beforeTearDown(self):
         pass
+
+    def test_portal_cnxml_file_interfaces(self):
+        # Make sure that CNXML file implements the expected interfaces.
+        self.failUnless(ICNXMLFile.isImplementedByInstancesOf(CNXMLFile))
+        self.failUnless(IParameterManager.isImplementedByInstancesOf(CNXMLFile))
 
     def test_portal_cnxml_file(self):
         self.assertEqual(1, 1)
