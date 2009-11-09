@@ -78,6 +78,7 @@
 		    <td i18n:translate="label_editform_validatesave" align="right">
 		      <span i18n:name="checkbox">
 			<input type="checkbox" name="validate" value="checked"
+                   class="noborder"
 			       tal:attributes="checked request/validate | nothing" />
 		      </span> Validate during save
 		    </td>

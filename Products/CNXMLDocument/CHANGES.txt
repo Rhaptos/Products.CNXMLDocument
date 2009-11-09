@@ -1,3 +1,18 @@
+CNXMLDocument-0.35.1 (Nov. 3, 2009)
+  - fix for permissions error on attempting to accept a role request
+
+CNXMLDocument-0.35
+  - collection-structure-redesign-1 (Oct. 22, 2009)
+    - Added cnxml back into md:abstracts
+    - stopped generation of IDs in abstracts
+    - update CNXML template for CNXML 0.7, mostly accomodating new MDML
+    - update auto upgrade for CNXML 0.7
+    - update validation for CNXML 0.7, and availability of fragment validation
+    - metadata template moves to a view
+    - MDML structure updated to MDML 0.5, including data manipulation in view
+    - handle metadata/cnxml as possible Unicode in several places
+    - added standalone views for abstract and body rendering derived from content-perf-1
+
 CNXMLDocument-0.34
   - content-actions-move (17 Aug 2009)
     - removed content-type logic from cnxml_transform.py; now in content_type_decide from RhaptosContent

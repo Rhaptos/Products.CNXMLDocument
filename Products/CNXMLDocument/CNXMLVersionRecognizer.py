@@ -57,7 +57,7 @@ class Recognizer:
     # do the parsing
     def getVersion(self):
         """Attempt to recognize the version of a CNXML document.
-        Specifically focused on 0.6, but we also try to detect 0.5/0.4 by doctype.
+        Specifically focused on 0.6+, but we also try to detect 0.5/0.4 by doctype.
         Will return strings like "0.5" or "0.6". None if not detectable.
         """
         # expat can parse in chunks; do this so we only handle as much as we need to,
@@ -67,8 +67,12 @@ class Recognizer:
         endidx = len(doctext)
         while not self.version and startat < endidx:
             upto = startat + CHUNK_SIZE
+            chunk = doctext[startat:upto]
+            if type(chunk) is unicode:  # expat should be able to handle unicode, but chokes, so go old-style
+                chunk = chunk.encode('utf-8')
+            
             try:
-                self.p.Parse(doctext[startat:upto])
+                self.p.Parse(chunk)
             except xml.parsers.expat.ExpatError:
                 return None
             startat = upto

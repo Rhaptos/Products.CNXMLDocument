@@ -12,9 +12,11 @@ from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from OFS.Image import File, cookId
 from Globals import package_home
 from AccessControl import ModuleSecurityInfo
+from zope.interface import implements
 from interfaces.ICNXMLFile import ICNXMLFile
 from interfaces.IParameterManager import IParameterManager
 from interfaces.IXPathNodeEditor import IXPathNodeEditor
+from Products.CNXMLDocument.newinterfaces import IMDML
 import os
 import re
 import types
@@ -34,33 +36,40 @@ manage_addCNXMLFileForm = PageTemplateFile('zpt/manage_addCNXMLFileForm',
 doctypeRegexp = re.compile(r"PUBLIC\s*['\"]([^>'\"]*)['\"]")
 cnxDTDRegexp = re.compile(r"//DTD CNXML (\S*?)[ /]")
 
-nameRegexp = re.compile(r"<title>(.*?)</title>", re.DOTALL)
+nameRegexp = re.compile(r"<title>(.*?)</title>", re.DOTALL | re.UNICODE)
 
 # The metadata matching is non-greedy because we only want the first
 # occurance at the beginning of the module
-metadataRegexp = re.compile(r"(<metadata.*?</metadata>)", re.DOTALL)
-featuredlinksRegexp = re.compile(r"(<featured\-links.*?</featured\-links>)", re.DOTALL)
-featuredlinksSpaceRegexp = re.compile(r"(</metadata>.*?<content)", re.DOTALL) # FIXME: see 'setFeaturedLinks' use
+metadataRegexp = re.compile(r"(<metadata.*?</metadata>)", re.DOTALL | re.UNICODE)
+featuredlinksRegexp = re.compile(r"(<featured\-links.*?</featured\-links>)", re.DOTALL | re.UNICODE)
+featuredlinksSpaceRegexp = re.compile(r"(</metadata>.*?<content)", re.DOTALL | re.UNICODE) # FIXME: see 'setFeaturedLinks' use
 
 # The content matching is greedy because we must match the entire
 # content section, event if it includes an </content> tag
-contentRegexp = re.compile(r"(<content>.*</content>)", re.DOTALL)
+contentRegexp = re.compile(r"(<content>.*</content>)", re.DOTALL | re.UNICODE)
 
 ## other constants
 STYLESHEET_BASE = "/usr/local/share/swi"
 
 ## upgrade service
 UPGRADE_05_TO_06_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/cnxml05to06.xsl'
+UPGRADE_06_TO_07_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/cnxml06to07.xsl'
 def autoUpgrade(source, **params):
-    """Turn older CNXML (0.5) into newer (0.6).
+    """Turn older CNXML (0.5/0.6) into newer (0.7).
     Checks version to determine if upgrade is needed.
     With a newer version, we may add additional stylesheets to the pipeline.
     Return tuple of (new_source, boolean_was_converted)
     """
     version = Recognizer(source).getVersion() # if wrong, we could end up doing this on every save
     stylesheets = []
-    if version != '0.6':
-        stylesheets = [UPGRADE_05_TO_06_XSL]
+    if version == '0.7':
+        pass # Do nothing. 0.7 is the latest
+    elif version == '0.6':
+        stylesheets.append(UPGRADE_06_TO_07_XSL)
+    else:
+        stylesheets.append(UPGRADE_05_TO_06_XSL)
+        stylesheets.append(UPGRADE_06_TO_07_XSL)
+
     if source and stylesheets:
         doc = XMLService.parseString(source)
         result = XMLService.xsltPipeline(doc, stylesheets, **params)
@@ -77,7 +86,7 @@ def autoIds(source, prefix=None, force=False, **params):
     'prefix' will add the passed-in string to the beginning of the ids
     'force' doesn't check version itself, relies on caller to certify the XML is okay.
     """
-    transformable = force or Recognizer(source).getVersion() == '0.6'
+    transformable = force or Recognizer(source).getVersion() in ('0.6', '0.7')
     # we want to make sure recognizer keeps working right; if wrong, we end up doing this on every save
 
     if prefix:
@@ -137,17 +146,13 @@ def manage_addCNXMLFile(self,id,file='',title='',precondition='', content_type='
 class CNXMLFile(File):
     """CNXML File"""
 
+    implements(IMDML)
     __implements__ = ICNXMLFile, IParameterManager, IXPathNodeEditor
 
     meta_type = "CNXML File"
 
     manage_parametersForm = PageTemplateFile('zpt/manage_parametersForm', globals())
     manage_look = PageTemplateFile('zpt/manage_look', globals())
-
-    # Template for metadata
-    metadataTemplate = PageTemplateFile('zpt/metadataTemplate', globals())
-    metadataTemplate.content_type = "text/xml"
-    metadataTemplate.title = "Metadata Template"
 
     # Template for cnxml
     cnxmlTemplate = PageTemplateFile('zpt/cnxmlTemplate', globals())
@@ -188,7 +193,12 @@ class CNXMLFile(File):
 
     def getSource(self):
         """Return document content"""
-        return str(self.data)
+        data = self.data
+        if type(data) is unicode:
+            data = data.encode('utf-8')
+        else:
+            data = str(data)  # possibly a Pdata
+        return data
 
     def setSource(self, source, idprefix=None):
         """Set the document's source.
@@ -218,12 +228,11 @@ class CNXMLFile(File):
                 backupto.invokeFactory(id=backupname, type_name='UnifiedFile')
                 backup = backupto[backupname]
                 backup.update_data(origsource)
+                backup.reindexObject()
 
         source, converted = autoUpgrade(origsource)
         if converted:
-            getMetadata = getattr(self.aq_parent, 'getMetadata', None)
-            if getMetadata:
-                source = self.setMetadata(getMetadata(), returnonly=True, source=source)
+            source = self.setMetadata(returnonly=True, source=source)
             self.setSource(source)
         return converted
 
@@ -544,9 +553,9 @@ class CNXMLFile(File):
         self.update_data(text)
 
 
-    def setMetadata(self, metadata, returnonly=False, source=""):
+    def setMetadata(self, metadata=None, returnonly=False, source=""):
         """Set the <metadata> portion of the CNXML document.
-         'metadata' is a dictionary of metadata consumed by metadataTemplate.
+         'metadata' is IGNORED! Deprecated!
          'returnonly' is boolean where true returns the updated text only;
              false sets the text on self, and is the default and normal way.
          'source' is optional text of the CNXML to set metadata on; usually used
@@ -554,16 +563,25 @@ class CNXMLFile(File):
         The 'returnonly' and 'source are sort of turn-into-function args, pretty
         much only for use in a situation where we're already doing an 'update_data'.
         """
+        if metadata:
+            log.warning("DEPRECATION WARNING: CNXMLDocument.CNXMLFile.setMetadata: 'metadata' arg is deprecated.")
         source = source or self.getSource()
         version = Recognizer(source).getVersion()
         text = source
-        if version=='0.6':
-            mdxml = self.metadataTemplate(**metadata).rstrip()
+        if version=='0.7':
+            mdxml = self.restrictedTraverse('metadata')().rstrip()
             mdxml = '\n'.join([l for l in mdxml.split('\n') if l.strip()])  # elim. blank lines
+            
+            # make sure we have the same type for regex sub...
+            if type(mdxml) is not unicode:
+                mdxml = mdxml.decode('utf-8')
+            if type(source) is not unicode:
+                source = source.decode('utf-8')
+            
             text = metadataRegexp.sub(mdxml, source)
             if not returnonly:
                 self.update_data(text)
-        elif version in ('0.4', '0.5'):  # FIXME: handle 0.5-ish metadata?
+        elif version in ('0.4', '0.5', '0.6'):  # FIXME: handle older metadata?
             log.warning("CNXMLFile: Metadata setting not supported for old CNXML version %s" % version)
         else:  # FIXME: older versions?
             log.warning("CNXMLFile: Metadata setting not supported for %s" % version or 'unknown version')

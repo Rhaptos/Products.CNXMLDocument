@@ -136,6 +136,8 @@ class PortalCNXMLFile(CNXMLFile, File):
             src = file
 
         src = autoIds(src, prefix=idprefix)
+        if type(src) is unicode:   # OFS.Image.File._read_data isn't happy with possible unicode
+            src = src.encode('utf-8')
         return CNXMLFile.manage_upload(self, file=src, REQUEST=REQUEST)
 
     def manage_edit(self, title, content_type, precondition='',

@@ -18,7 +18,8 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:cnxml="http://cnx.rice.edu/cnxml"
   xmlns:m="http://www.w3.org/1998/Math/MathML"
-  xmlns:md="http://cnx.rice.edu/mdml/0.4"
+  xmlns:md4="http://cnx.rice.edu/mdml/0.4"
+  xmlns:md="http://cnx.rice.edu/mdml"
   xmlns:q="http://cnx.rice.edu/qml/1.0"
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   xmlns:bib="http://bibtexml.sf.net/"
@@ -82,12 +83,7 @@
     <xsl:variable name="display" select="normalize-space(@display)"/>
     <xsl:copy>
       <xsl:choose>
-        <xsl:when test="self::* and $required-ids/req:element[@name=$element-name][@display=$display]">
-          <xsl:attribute name="id">
-            <xsl:value-of select="concat($id-prefix, generate-id())"/>
-          </xsl:attribute>
-        </xsl:when>
-        <xsl:when test="self::* and $required-ids/req:element[@name=$element-name][@display='block'] and ancestor::md:abstract">
+        <xsl:when test="self::* and $required-ids/req:element[@name=$element-name][@display=$display] and not(ancestor::md4:abstract or ancestor::md:abstract)">
           <xsl:attribute name="id">
             <xsl:value-of select="concat($id-prefix, generate-id())"/>
           </xsl:attribute>
