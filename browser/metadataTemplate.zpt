@@ -1,0 +1,103 @@
+<metadata xmlns:tal="http://xml.zope.org/namespaces/tal"
+          xmlns:metal="http://xml.zope.org/namespaces/metal"
+          xmlns:md="http://cnx.rice.edu/mdml"
+          tal:define="metadata view/metadata"
+          mdml-version="0.5">
+  <!-- WARNING! The 'metadata' section is read only. Do not edit below.
+       Changes to the metadata section in the source will not be saved. -->
+
+  <md:repository tal:condition="metadata/repository | nothing"
+                 tal:content="metadata/repository">http://cnx.org/content</md:repository>
+  <md:content-url  tal:condition="metadata/url | nothing"
+                  tal:content="metadata/url">http://cnx.org/content/col00001/1.12/</md:content-url>
+  <md:content-id tal:define="oid metadata/objectId"
+                 tal:content="python:oid or 'new'">[content-id]</md:content-id>
+  <md:title tal:content="metadata/title">[title]</md:title>
+  <md:short-title tal:condition="metadata/shorttitle | nothing"
+                 tal:content="metadata/shorttitle">A Shorter Version of the Above Title</md:short-title>
+  <md:subtitle tal:condition="metadata/subtitle | nothing"
+                 tal:content="metadata/subtitle">A Tale of Wonder</md:subtitle>
+  <md:version tal:content="metadata/version">[version]</md:version>
+  <md:created tal:content="metadata/created">[date of creation]</md:created>
+  <md:revised tal:content="metadata/revised">[date of revision]</md:revised>
+
+  <md:actors>
+    <tal:actors tal:repeat="actor metadata/actors">
+    <md:organization userid="cnxorg" tal:attributes="userid actor/id"
+                     tal:condition="python:actor['account_type']=='org'">
+      <md:shortname tal:content="actor/shortname">Connexions</md:shortname>
+      <md:fullname tal:content="actor/fullname">Connexions</md:fullname>
+      <md:email tal:content="actor/email">cnx@cnx.org</md:email>
+    </md:organization>
+    <md:person userid="jago" tal:attributes="userid actor/id"
+               tal:condition="python:actor['account_type']!='org'">
+      <md:firstname tal:content="actor/firstname">Adan</md:firstname>
+      <md:surname tal:content="actor/surname">Galvan</md:surname>
+      <md:fullname tal:content="actor/fullname">Adan Galvan</md:fullname>
+      <md:email tal:content="actor/email">agalvan@gmail.com</md:email>
+    </md:person>
+    </tal:actors>
+  </md:actors>
+  <md:roles>
+    <md:role type="author" tal:content="python:' '.join(metadata['authors'])">cnxorg jago mhusband</md:role>
+    <md:role type="maintainer" tal:content="python:' '.join(metadata['maintainers'])">cnxorg jago mhusband</md:role>
+    <md:role type="licensor" tal:content="python:' '.join(metadata['licensors'])">jago mhusband</md:role>
+    <md:role type="editor"
+             tal:condition="metadata/editors | nothing"
+             tal:content="python:' '.join(metadata['editors'])">mhusband</md:role>
+    <md:role type="translator"
+             tal:condition="metadata/translators | nothing"
+             tal:content="python:' '.join(metadata['translators'])">mhusband</md:role>
+  </md:roles>
+
+  <md:license url="http://creativecommons.org/licenses/by/2.0/"
+              tal:attributes="url metadata/license" />
+  <!-- For information on license requirements for use or modification, see license url in the
+       above <md:license> element.
+       For information on formatting required attribution, see the URL:
+         CONTENT_URL/content_info#cnx_cite_header
+       where CONTENT_URL is the value provided above in the <md:content-url> element.
+  -->
+  <md:version-history url="" tal:condition="nothing" />
+  <md:ancillary url="" tal:condition="nothing"/>
+  <tal:comment replace="nothing">
+      extended attribution not landed yet. it will have to fill this in when it is done.
+  </tal:comment>
+  <md:extended-attribution tal:condition="metadata/extentedattribution | nothing">
+  </md:extended-attribution>
+
+  <md:derived-from url="http://cnx.org/content/col01010/3.2345"
+                   tal:define="parent nocall:metadata/parent"
+                   tal:condition="nocall:parent"
+                   tal:attributes="url parent/url">
+  </md:derived-from>
+
+  <md:keywordlist tal:condition="metadata/keywords">
+    <md:keyword tal:repeat="keyword metadata/keywords" tal:content="keyword">[keyword]</md:keyword>
+  </md:keywordlist>
+
+  <md:subjectlist tal:condition="metadata/subject">
+    <md:subject tal:repeat="subject metadata/subject" tal:content="subject">Science</md:subject>
+  </md:subjectlist>
+
+  <md:abstract tal:content="structure metadata/abstract">[Module abstract]</md:abstract>
+
+  <md:language tal:content="metadata/language">es</md:language>
+
+  <md:education-levellist tal:condition="nothing">
+    <md:education-level source="http://ns.nsdl.org/ed_type_v1.00/">Middle School</md:education-level>
+  </md:education-levellist>
+
+  <md:objectives  tal:condition="nothing">Take Hill 45.</md:objectives>
+  <md:homepage    tal:condition="metadata/homepage | nothing"
+                  tal:content="metadata/homepage">http://cnx.org/</md:homepage>
+  <md:institution tal:condition="metadata/institution | nothing"
+                  tal:content="metadata/institution">Connexions</md:institution>
+  <md:course-code tal:condition="metadata/coursecode | nothing"
+                  tal:content="metadata/coursecode">CNX 101</md:course-code>
+  <md:instructor  tal:condition="metadata/instructor | nothing"
+                  tal:content="metadata/instructor">Baguette O. Gloom</md:instructor>
+
+  <!-- WARNING! The 'metadata' section is read only. Do not edit above.
+       Changes to the metadata section in the source will not be saved. -->
+</metadata>
