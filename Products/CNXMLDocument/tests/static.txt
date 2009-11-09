@@ -9,12 +9,6 @@ being correctly implemented::
     >>> from Products.CNXMLDocument.CNXMLFile import CNXMLFile
     >>> CNXMLFile.meta_type == 'CNXML File'
     True
-    >>> CNXMLFile.metadataTemplate
-    <PageTemplateFile at metadataTemplate>
-    >>> CNXMLFile.metadataTemplate.content_type == 'text/xml'
-    True
-    >>> CNXMLFile.metadataTemplate.title == 'Metadata Template'
-    True
     >>> CNXMLFile.cnxmlTemplate
     <PageTemplateFile at cnxmlTemplate>
     >>> CNXMLFile.cnxmlTemplate.content_type == 'text/xml'
