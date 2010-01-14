@@ -1,8 +1,11 @@
-CNXMLDocument-0.36 (Dec 16, 2009)
-  - fix progressively slower abstract rendering times
+CNXMLDocument-0.37
+  - siyavula-phase-3 (Jan 11, 2010)
 
-CNXMLDocument-0.35.1 (Nov. 3, 2009)
-  - fix for permissions error on attempting to accept a role request
+CNXMLDocument-0.36
+  - fix progressively slower abstract rendering times (Dec 16, 2010)
+
+CNXMLDocument-0.35.1
+  - fix for permissions error on attempting to accept a role request (Nov. 3, 2009)
 
 CNXMLDocument-0.35
   - collection-structure-redesign-1 (Oct. 22, 2009)
