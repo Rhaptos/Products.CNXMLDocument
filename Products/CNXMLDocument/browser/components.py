@@ -5,9 +5,10 @@ from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument.XMLService import XMLError
 
 
-def rendercnxml(source, prestyles=[]):
-    prestyles.append(CNXML_RENDER_XSL)
-    stylesheets = prestyles
+def rendercnxml(source, prestyles=()):
+
+    stylesheets = list(prestyles)
+    stylesheets.append(CNXML_RENDER_XSL)
     
     params = {}
     params['wrapper'] = 0

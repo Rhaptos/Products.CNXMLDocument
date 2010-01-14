@@ -11,8 +11,8 @@
 
 <title tal:content="options/title | string:CNXML">[title]</title>
 <metadata xmlns:md="http://cnx.rice.edu/mdml">
-       <!-- will be filled by metadataTemplate later -->
-</metadata>
+     <!--  will be filled by metadataTemplate later -->
+</metadata> 
 <content>
   <para id="delete_me">
      <!-- Insert module text here -->
