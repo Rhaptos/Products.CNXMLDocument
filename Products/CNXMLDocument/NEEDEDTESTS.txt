@@ -1,0 +1,22 @@
+NEEDEDTESTS
+if we had proper unit testing, we'd want to be sure to include theses cases...
+(add to this file as you come across areas that could use verification, and/or fix bugs)
+
+autoId:
+ - works on 0.6
+ - doesn't work on <0.6
+ - doesn't work on bad XML
+ - doesn't explode in any case, esp. bad data
+ - autoId force works
+ - works with EIP fragments
+
+featured links:
+ start with no links section
+ getFeaturedLinks()==None
+ get text
+ setFeaturedLinks(links)
+ get text2, check good insertion
+ getFeaturedLinks()==links
+ setFeaturedLinks(links)
+ get text3, check same as text2
+ getFeaturedLinks() same as last time

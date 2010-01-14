@@ -1,0 +1,135 @@
+CNXMLDocument-0.37
+  - siyavula-phase-3 (Jan 11, 2010)
+
+CNXMLDocument-0.36
+  - fix progressively slower abstract rendering times (Dec 16, 2010)
+
+CNXMLDocument-0.35.1
+  - fix for permissions error on attempting to accept a role request (Nov. 3, 2009)
+
+CNXMLDocument-0.35
+  - collection-structure-redesign-1 (Oct. 22, 2009)
+    - Added cnxml back into md:abstracts
+    - stopped generation of IDs in abstracts
+    - update CNXML template for CNXML 0.7, mostly accomodating new MDML
+    - update auto upgrade for CNXML 0.7
+    - update validation for CNXML 0.7, and availability of fragment validation
+    - metadata template moves to a view
+    - MDML structure updated to MDML 0.5, including data manipulation in view
+    - handle metadata/cnxml as possible Unicode in several places
+    - added standalone views for abstract and body rendering derived from content-perf-1
+
+CNXMLDocument-0.34
+  - content-actions-move (17 Aug 2009)
+    - removed content-type logic from cnxml_transform.py; now in content_type_decide from RhaptosContent
+
+CNXMLDocument-0.33
+  - Module Edit Workflow (30 Jun 2009)
+    - Preparatory work for CNXML in abstracts (not yet deployed)
+
+CNXMLDocument-0.32
+  - cnxml 0.6 hot fixes (06 Mar 2009)
+    - EIP fixes autoids, empty titles, unicode, namespaces. (#8357 #8379 #8390 #8376)
+
+CNXMLDocument-0.31
+  - cnxml 0.6 (30 Jan 2009)
+    - #7322: use RelaxNG validation (for 0.6) instead of DTDs. Adds 'lxml' Python package.
+
+CNXMLDocument-0.30
+  - Major Edit-in-Place update:
+    - new api to pull in work group/space module files into the module on publish
+    - new api to return a fragment of the source document serialized
+
+CNXMLDocument-0.29
+  - upgrade to Plone 2.5
+
+CNXMLDocument-0.28
+  - provide baretext.xsl for generating SearchableText from CNXML
+
+CNXMLDocument-0.27
+  - i18n Translation Support
+
+CNXMLDocument-0.26
+  - CNXMLFile updated to escape html entities before writing the name tag
+  - Fixed the regular expression for finding the name tag to only match the first name tag, not any name tag
+
+CNXMLDocument-0.25
+  - Refactor: moved Authentic import into CNXMLTransforms product
+  - remove import/export and preview tabs for secondary CNXML; requires restart and reinstall
+
+CNXMLDocument-0.24
+  - Small cleanups
+  - Fix security declarations for PortalCNXMLFile
+  - Changed RISA to Rhaptos
+
+CNXMLDocument-0.23
+  - Refactored CNXML Import/Export
+  - Fixed stylesheet parameter omission
+
+CNXMLDocument-0.22
+  - New CNXML rendering methods
+  - Improved support for XML parsing options
+  - Removed hardcoded filesystem paths
+
+CNXMLDocument-0.21
+  - New methods for editing adding, replacing and deleting subtrees
+    by XPath expressions
+
+CNXMLDocument-0.20
+  - New createTemplate method for making blank, valid documents
+
+CNXMLDocument-0.19
+  - Fix Installer to put the skin layer immediately after 'custom'
+    instead of after 'content' which no longer is used
+
+CNXMLDocument-0.18
+  - Drop support for MathPlayer 1 in favor of MathPlayer 2
+  - Pass the target doctype as a parameter when transforming
+
+CNXMLDocument-0.17
+  - Fix missing MathML namespace on Authentic export
+  - Fix unexpanded entities in Authentic export
+
+CNXMLDocument-0.16
+  - Use Popen3 class to wait for xmllint children so they don't zombify
+
+CNXMLDocument-0.15
+  - Handle stylesheet transformation failures better
+
+CNXMLDocument-0.14
+  - Fix unicode in metadata problem
+
+CNXMLDocument-0.13
+  - Fix import/export form to display a warning if the module is not
+    at least CNXML 0.5
+  - Better uniform view mechanism 
+
+CNXMLDocument-0.12
+  - Don't depend on presence of query folder
+  - Define and raise XMLError if an error occurs during XML processing
+
+CNXMLDocument-0.11
+  - No longer use entity catalog hack globally, just per instance (yay!)
+
+CNXMLDocument-0.10
+  - Fixed bug where PortalCNXMLFiles weren't being unindexed
+  - Fixed bug exporting CNXMLFiles whose IDs contain '.'
+
+CNXMLDocument-0.9
+  - Support for CMF: PortalCNXMLFile
+  - Moved import/export support from RisaModuleEditor to CNXMLDocument
+
+CNXMLDocument-0.8
+  - Use BLATHER for debugging log output
+  - Don't try to output author/maintainer in metadata if they don't exist
+
+CNXMLDocument-0.7
+  - Fix Unicode string encoding problem when doing metadata substitution
+
+CNXMLDocument-0.6
+  - Removed CNXMLDocumentBase class.
+  - Definied IXMLFile and IParameterManager interfaces
+  - Changed setMetadata() method to take a dictionary of metadata properties, instead of a text block
+  - Use new browser independent stylesheets 
+  - Renamed get/setName to get/setTitle
+  - Stub unit-tests

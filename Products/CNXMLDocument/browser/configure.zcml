@@ -1,0 +1,29 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+   <browser:page
+      for="Products.CNXMLDocument.newinterfaces.IMDML"
+      name="metadata"
+      class="Products.CNXMLDocument.browser.views.MetadataView"
+      template="metadataTemplate.zpt"
+      permission="zope2.View" />
+
+  <browser:page
+      for="Products.CNXMLDocument.newinterfaces.ICNXMLContainer"
+      name="body"
+      class=".components.CNXMLComponents"
+      permission="zope.Public"
+      attribute="body"
+      />
+
+  <browser:page
+      for="Products.CNXMLDocument.newinterfaces.ICNXMLAbstract"
+      name="abstract_render"
+      class=".components.CNXMLComponents"
+      permission="zope.Public"
+      attribute="abstract"
+      />
+
+</configure>

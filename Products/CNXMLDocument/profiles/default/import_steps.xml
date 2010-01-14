@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<import-steps>
+  <import-step id="cnxmldocument-reorder" version="20090921-01"
+      handler="Products.CNXMLDocument.setuphandlers.reorderPredicate"
+      title="">
+    <dependency step="contenttyperegistry"/>
+    Make sure that the cnxml predicate is at the top
+  </import-step>
+</import-steps>
