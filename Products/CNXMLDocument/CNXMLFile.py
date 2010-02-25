@@ -41,8 +41,9 @@ nameRegexp = re.compile(r"<title>(.*?)</title>", re.DOTALL | re.UNICODE)
 # The metadata matching is non-greedy because we only want the first
 # occurance at the beginning of the module
 metadataRegexp = re.compile(r"(<metadata.*?</metadata>)", re.DOTALL | re.UNICODE)
+missingmetadataRegexp = re.compile(r"(?<=</title>)\s*", re.DOTALL | re.UNICODE)
 featuredlinksRegexp = re.compile(r"(<featured\-links.*?</featured\-links>)", re.DOTALL | re.UNICODE)
-featuredlinksSpaceRegexp = re.compile(r"(</metadata>.*?<content)", re.DOTALL | re.UNICODE) # FIXME: see 'setFeaturedLinks' use
+missingfeaturedlinksRegexp = re.compile(r"\s*(?=<content)", re.DOTALL | re.UNICODE)
 
 # The content matching is greedy because we must match the entire
 # content section, event if it includes an </content> tag
@@ -568,7 +569,7 @@ class CNXMLFile(File):
         source = source or self.getSource()
         version = Recognizer(source).getVersion()
         text = source
-        if version=='0.7':
+        if float(version) >= float('0.7'):
             mdxml = self.restrictedTraverse('metadata')().rstrip()
             mdxml = '\n'.join([l for l in mdxml.split('\n') if l.strip()])  # elim. blank lines
             
@@ -577,8 +578,14 @@ class CNXMLFile(File):
                 mdxml = mdxml.decode('utf-8')
             if type(source) is not unicode:
                 source = source.decode('utf-8')
-            
-            text = metadataRegexp.sub(mdxml, source)
+
+            match = metadataRegexp.search(source)
+            if match is None:
+                log.warning("CNXMLFile: Metadata is missing and will be added back.")
+                text = missingmetadataRegexp.sub("\n%s\n" % mdxml, source, 1)
+            else:
+                text = metadataRegexp.sub(mdxml, source)
+
             if not returnonly:
                 self.update_data(text)
         elif version in ('0.4', '0.5', '0.6'):  # FIXME: handle older metadata?
@@ -650,10 +657,10 @@ class CNXMLFile(File):
         We don't currently expect more than a strict vocabulary of three types 'example',
         'supplemental', and 'Prerequisite', though the method will try to support that.
         """
-        # skip non-0.6 content
+        # skip pre-0.6 content
         source = self.getSource()
         version = Recognizer(source).getVersion()
-        if version!='0.6':
+        if float(version) < float('0.6'):
             return
 
         # build insert text
@@ -672,10 +679,7 @@ class CNXMLFile(File):
         if exists:
             text = featuredlinksRegexp.sub(linktext, source, 1)
         else:
-            text = featuredlinksSpaceRegexp.sub("</metadata>\n%s\n<content" % linktext, source, 1)
-            # FIXME: the regex match includes the containing tags, so I replace them. doesn't seem
-            # very elegant, though it is what setTitle, setMetadata, and the rest do. Is there a way
-            # to match only the space?
+            text = missingfeaturedlinksRegexp.sub("\n%s\n" % linktext, source, 1)
         self.update_data(text)
 
 
