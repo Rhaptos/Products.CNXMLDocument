@@ -25,6 +25,7 @@ import XMLService
 import libxml2
 from xml.dom import minidom
 from CNXMLVersionRecognizer import Recognizer
+from zExceptions import NotFound
 
 log = logging.getLogger('CNXMLDocument.CNXMLFile')
 
@@ -164,6 +165,11 @@ class CNXMLFile(File):
     featuredlinksTemplate = PageTemplateFile('zpt/featuredlinksTemplate', globals())
     featuredlinksTemplate.content_type = "text/xml"
     featuredlinksTemplate.title = "Featured Links Template"
+
+    # Template for metadata - Plan B for when the view does not work
+    metadataTemplate = PageTemplateFile('browser/metadataTemplate', globals())
+    metadataTemplate.content_type = "text/xml"
+    metadataTemplate.title = "Metadata Template"
 
     options = list(File.manage_options);
     manage_options = tuple(options[:3]
@@ -570,7 +576,13 @@ class CNXMLFile(File):
         version = Recognizer(source).getVersion()
         text = source
         if float(version) >= float('0.7'):
-            mdxml = self.restrictedTraverse('metadata')().rstrip()
+            try:
+                mdxml = self.restrictedTraverse('metadata')().rstrip()
+            except NotFound:
+                if metadata is not None:
+                    mdxml = self.metadataTemplate(metadata=metadata)
+                else:
+                    raise NotFound
             mdxml = '\n'.join([l for l in mdxml.split('\n') if l.strip()])  # elim. blank lines
             
             # make sure we have the same type for regex sub...

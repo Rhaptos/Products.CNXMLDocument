@@ -1,7 +1,7 @@
 <metadata xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:metal="http://xml.zope.org/namespaces/metal"
           xmlns:md="http://cnx.rice.edu/mdml"
-          tal:define="metadata view/metadata"
+          tal:define="metadata view/metadata | options/metadata"
           mdml-version="0.5">
   <!-- WARNING! The 'metadata' section is read only. Do not edit below.
        Changes to the metadata section in the source will not be saved. -->
