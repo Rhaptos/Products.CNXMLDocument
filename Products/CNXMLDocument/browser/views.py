@@ -62,6 +62,6 @@ def pivot_roles(retval,mtool):
         actors.append(mdata)
     retval['actors'] = actors
          
-    if retval['parent']:
+    if retval.get('parent'):
         retval['parent'] = pivot_roles(retval['parent'],mtool)
     return retval
