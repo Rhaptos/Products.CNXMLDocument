@@ -70,6 +70,61 @@
                    tal:define="parent nocall:metadata/parent"
                    tal:condition="nocall:parent"
                    tal:attributes="url parent/url">
+  <tal:comment replace="nothing">
+      really ugly cut&paste of above to support 1 level recursion for parent
+  </tal:comment>
+  <md:repository tal:condition="parent/repository | nothing"
+                 tal:content="parent/repository">http://cnx.org/content</md:repository>
+  <md:content-url  tal:condition="parent/url | nothing"
+                  tal:content="parent/url">http://cnx.org/content/col00001/1.12/</md:content-url>
+  <md:content-id tal:define="oid parent/objectId"
+                 tal:content="python:oid or 'new'">[content-id]</md:content-id>
+  <md:title tal:content="parent/title">[title]</md:title>
+  <md:short-title tal:condition="parent/shorttitle | nothing"
+                 tal:content="parent/shorttitle">A Shorter Version of the Above Title</md:short-title>
+  <md:subtitle tal:condition="parent/subtitle | nothing"
+                 tal:content="parent/subtitle">A Tale of Wonder</md:subtitle>
+  <md:version tal:content="parent/version">[version]</md:version>
+  <md:created tal:content="parent/created">[date of creation]</md:created>
+  <md:revised tal:content="parent/revised">[date of revision]</md:revised>
+
+  <md:actors>
+    <tal:actors tal:repeat="actor parent/actors">
+    <md:organization userid="cnxorg" tal:attributes="userid actor/id"
+                     tal:condition="python:actor['account_type']=='org'">
+      <md:shortname tal:content="actor/shortname">Connexions</md:shortname>
+      <md:fullname tal:content="actor/fullname">Connexions</md:fullname>
+      <md:email tal:content="actor/email">cnx@cnx.org</md:email>
+    </md:organization>
+    <md:person userid="jago" tal:attributes="userid actor/id"
+               tal:condition="python:actor['account_type']!='org'">
+      <md:firstname tal:content="actor/firstname">Adan</md:firstname>
+      <md:surname tal:content="actor/surname">Galvan</md:surname>
+      <md:fullname tal:content="actor/fullname">Adan Galvan</md:fullname>
+      <md:email tal:content="actor/email">agalvan@gmail.com</md:email>
+    </md:person>
+    </tal:actors>
+  </md:actors>
+  <md:roles>
+    <md:role type="author" tal:content="python:' '.join(parent['authors'])">cnxorg jago mhusband</md:role>
+    <md:role type="maintainer" tal:content="python:' '.join(parent['maintainers'])">cnxorg jago mhusband</md:role>
+    <md:role type="licensor" tal:content="python:' '.join(parent['licensors'])">jago mhusband</md:role>
+    <md:role type="editor"
+             tal:condition="parent/editors | nothing"
+             tal:content="python:' '.join(parent['editors'])">mhusband</md:role>
+    <md:role type="translator"
+             tal:condition="parent/translators | nothing"
+             tal:content="python:' '.join(parent['translators'])">mhusband</md:role>
+  </md:roles>
+
+  <md:license url="http://creativecommons.org/licenses/by/2.0/"
+              tal:attributes="url parent/license" />
+  <!-- For information on license requirements for use or modification, see license url in the
+       above <md:license> element.
+       For information on formatting required attribution, see the URL:
+         CONTENT_URL/content_info#cnx_cite_header
+       where CONTENT_URL is the value provided above in the <md:content-url> element.
+  -->
   </md:derived-from>
 
   <md:keywordlist tal:condition="metadata/keywords">
