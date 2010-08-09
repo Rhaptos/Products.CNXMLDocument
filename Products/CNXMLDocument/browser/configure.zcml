@@ -4,6 +4,7 @@
     xmlns:five="http://namespaces.zope.org/five">
 
    <five:traversable class="Products.CNXMLDocument.CNXMLFile.CNXMLFile" />
+   <five:traversable class="Products.RhaptosModuleStorage.ModuleView.ModuleView" />
 
    <browser:page
       for="Products.CNXMLDocument.newinterfaces.IMDML"
