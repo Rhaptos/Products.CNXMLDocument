@@ -205,6 +205,8 @@ class CNXMLFile(File):
         """Set the document's source.
           'idprefix' is ignored in this object. See PortalCNXMLFile.
         """
+        if type(source) is unicode:   # OFS.Image.File._read_data isn't happy with possible unicode
+            source = source.encode('utf-8')
         self.manage_upload(source)
 
     def getVersion(self):

@@ -17,9 +17,6 @@ from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile
 #from cStringIO import StringIO
 
-from AccessControl import ModuleSecurityInfo
-ModuleSecurityInfo('Products.CNXMLDocument.XMLService').declarePublic('parseString')
-
 import logging
 xsltlog = logging.getLogger('xslt')
 log = logging.getLogger('CNXMLDocument.XMLService')
@@ -144,22 +141,6 @@ class XMLParser:
             raise XMLParserError, "Error: could not parse document"
 
         return self._doParse(parser)
-
-def createContext(doc, nsDict):
-    ctxt = doc.xpathNewContext()
-    for key, value in nsDict:
-        ctxt.xpathRegisterNs(key, value)
-    return ctxt
-
-def xpathEval(doc, xpath):
-    return doc.xpathEval(xpath)
-
-def nodeValue(node):
-    return node.content
-
-def xpathString(doc, xpath):
-    for n in doc.xpathEval(xpath):
-        return n.content    
 
 def parseString(content):
     """
@@ -424,5 +405,4 @@ if __name__ == "__main__":
         sys.exit(-1);
 
     print result
-
 

@@ -1,3 +1,6 @@
+CNXMLDocument-0.39
+  - changes to support @@metadata and derived-from info for all rhaptos objects
+
 CNXMLDocument-0.38
   - generic setup refactor. Rhaptos 2.0 release
 

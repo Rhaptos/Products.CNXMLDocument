@@ -1,7 +1,10 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.38'
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
+
+version = read("Products", "CNXMLDocument", "version.txt").strip()
 
 setup(name='Products.CNXMLDocument',
       version=version,

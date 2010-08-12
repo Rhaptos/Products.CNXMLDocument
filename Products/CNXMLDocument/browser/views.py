@@ -33,28 +33,35 @@ class MetadataView(BrowserView):
             retval['repository'] = repos
             if retval['url'].startswith(oldrepos):
                 retval['url'] =  retval['url'].replace(oldrepos, repos)
-        
-        # actor/role refactoring: our content stores this nicely in role categories, but
-        # we need a global list of actors for the MDML format
+
         mtool = getToolByName(self, 'portal_membership')
-        uniqs = set()
-        for r in ['authors', 'maintainers', 'licensors', 'editors', 'translators']:
-            rolelist = retval.get(r, [])
-            for uid in rolelist:
-                uniqs.add(uid)
-        
-        actors = []
-        for uid in uniqs:
-            m = mtool.getMemberById(uid)
-            mdata = {}
-            mdata['id'] = uid
-            mdata['shortname'] = m.getProperty('shortname')
-            mdata['firstname'] = m.getProperty('firstname')
-            mdata['surname'] = m.getProperty('surname')
-            mdata['fullname'] = m.getProperty('fullname')
-            mdata['email'] = m.getProperty('email')
-            mdata['account_type'] = m.getProperty('account_type')
-            actors.append(mdata)
-        retval['actors'] = actors
-        
+        pivot_roles(retval,mtool)
+
         return retval
+
+def pivot_roles(retval,mtool):
+    """actor/role refactoring: our content stores this nicely in role categories, but
+    we need a global list of actors for the MDML format """
+    uniqs = set()
+    for r in ['authors', 'maintainers', 'licensors', 'editors', 'translators']:
+        rolelist = retval.get(r, [])
+        for uid in rolelist:
+            uniqs.add(uid)
+    
+    actors = []
+    for uid in uniqs:
+        m = mtool.getMemberById(uid)
+        mdata = {}
+        mdata['id'] = uid
+        mdata['shortname'] = m.getProperty('shortname')
+        mdata['firstname'] = m.getProperty('firstname')
+        mdata['surname'] = m.getProperty('surname')
+        mdata['fullname'] = m.getProperty('fullname')
+        mdata['email'] = m.getProperty('email')
+        mdata['account_type'] = m.getProperty('account_type')
+        actors.append(mdata)
+    retval['actors'] = actors
+         
+    if retval.get('parent'):
+        retval['parent'] = pivot_roles(retval['parent'],mtool)
+    return retval
