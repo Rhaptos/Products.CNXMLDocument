@@ -673,7 +673,7 @@ class CNXMLFile(File):
         # skip pre-0.6 content
         source = self.getSource()
         version = Recognizer(source).getVersion()
-        if float(version) < float('0.6'):
+        if version and float(version) < float('0.6'):
             return
 
         # build insert text
