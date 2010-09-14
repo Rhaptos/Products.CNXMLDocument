@@ -610,7 +610,7 @@ class CNXMLFile(File):
     def setTitle(self, title):
         """Set the <name> portion of the CNXML document"""
         source = self.getSource()
-        log.info("CNXMLPHIL: type(source)=%s" % type(source))
+
         # Convert title to unicode if necessary
         if not isinstance(title, unicode):
           title = unicode(title, 'utf-8')
