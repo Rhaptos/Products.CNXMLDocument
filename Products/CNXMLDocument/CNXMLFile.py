@@ -571,7 +571,7 @@ class CNXMLFile(File):
         source = source or self.getSource()
         version = Recognizer(source).getVersion()
         text = source
-        if float(version) >= float('0.7'):
+        if version is None or float(version) >= float('0.7'):
             mdxml = self.restrictedTraverse('metadata')().rstrip()
             mdxml = '\n'.join([l for l in mdxml.split('\n') if l.strip()])  # elim. blank lines
             
@@ -610,7 +610,18 @@ class CNXMLFile(File):
     def setTitle(self, title):
         """Set the <name> portion of the CNXML document"""
         source = self.getSource()
+
+        # Convert title to unicode if necessary
+        if not isinstance(title, unicode):
+          title = unicode(title, 'utf-8')
+        title = title.encode('utf-8')
+
         title = title.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+        # Convert source to unicode if necessary
+        if not isinstance(source, unicode):
+          source = unicode(source, 'utf-8')
+        source = source.encode('utf-8')
+
         text = nameRegexp.sub("<title>%s</title>" % title, source, 1)
         self.update_data(text)
 
@@ -662,7 +673,7 @@ class CNXMLFile(File):
         # skip pre-0.6 content
         source = self.getSource()
         version = Recognizer(source).getVersion()
-        if float(version) < float('0.6'):
+        if version and float(version) < float('0.6'):
             return
 
         # build insert text
