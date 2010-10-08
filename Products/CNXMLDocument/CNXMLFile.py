@@ -72,10 +72,13 @@ def autoUpgrade(source, **params):
         stylesheets.append(UPGRADE_06_TO_07_XSL)
 
     if source and stylesheets:
-        doc = XMLService.parseString(source)
-        result = XMLService.xsltPipeline(doc, stylesheets, **params)
-        doc.freeDoc()
-        return result, True
+        try:
+            doc = XMLService.parseString(source)
+            result = XMLService.xsltPipeline(doc, stylesheets, **params)
+            doc.freeDoc()
+            return result, True
+        except XMLService.XMLParserError:
+            pass  # just stopping on parse error is okay; it'll send us to the fallback below
     return source, False
 
 ## auto-id service
@@ -222,7 +225,7 @@ class CNXMLFile(File):
           'backupto' is a containerish object where we will create a File containing the current contents.
              We presume to have the permissions to do this.
           'backupname' is the id of that file; default is 'index.cnxml.old'
-        Returns true value if upgrade was run, false value if not run (because it is current.)
+        Returns true value if upgrade was run, false value if not run (because it is current, or failed.)
         """
         origsource = self.getSource()
         if backupto and backupname:
