@@ -14,7 +14,7 @@ import libxml2
 import os
 
 from Globals import package_home
-from Products.CMFCore import utils, CMFCorePermissions
+from Products.CMFCore import utils, permissions
 from Products.CMFCore.DirectoryView import registerDirectory
 import sys
 
@@ -55,7 +55,7 @@ def initialize(context):
     utils.initializeBasesPhase2( z_bases, context )
     utils.ContentInit(PortalCNXMLFile.PortalCNXMLFile.meta_type,
                       content_types = contentClasses,
-                      permission = CMFCorePermissions.AddPortalContent,
+                      permission = permissions.AddPortalContent,
                       extra_constructors = contentConstructors,
                       fti = PortalCNXMLFile.factory_type_information).initialize(context)
 

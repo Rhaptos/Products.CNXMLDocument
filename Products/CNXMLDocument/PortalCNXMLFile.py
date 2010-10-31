@@ -12,7 +12,7 @@ import AccessControl
 from Globals import InitializeClass
 from OFS.Image import cookId
 from Products.CMFDefault.File import File, addFile
-from Products.CMFCore import CMFCorePermissions
+from Products.CMFCore import permissions
 from CNXMLFile import CNXMLFile, autoUpgrade, autoIds
 from XMLService import XMLError
 
@@ -27,36 +27,36 @@ factory_type_information = (
       'actions'        : ({'id'            : 'view',
                            'name'          : 'View',
                            'action'        : 'string:${object_url}/file_view',
-                           'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                           'permissions'   : (permissions.ModifyPortalContent, ),
                            },
                           {'id'            : 'download',
                            'name'          : 'Download',
                            'action'        : 'string:${object_url}',
-                           'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                           'permissions'   : (permissions.ModifyPortalContent, ),
                            'visible'       : 1,
                            },
                           {'id'            : 'edit',
                            'name'          : 'Edit',
                            'action'        : 'string:${object_url}/file_edit_form',
-                           'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                           'permissions'   : (permissions.ModifyPortalContent, ),
                            'visible'       : 1,
                            },
                           {'id'            : 'importexport',
                            'name'          : 'Import/Export',
                            'action'        : 'cnxml_importexport',
-                           'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                           'permissions'   : (permissions.ModifyPortalContent, ),
                            'visible'       : 0,
                            },
                           {'id'            : 'preview',
                            'name'          : 'Preview',
                            'action'        : '../module_view',
-                           'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                           'permissions'   : (permissions.ModifyPortalContent, ),
                            'visible'       : 0,
                            },
                           { 'id'            : 'external_edit',
                             'name'          : 'External Edit',
                             'action'        : 'external_edit',
-                            'permissions'   : (CMFCorePermissions.ModifyPortalContent, ),
+                            'permissions'   : (permissions.ModifyPortalContent, ),
                             'visible'       : 0,
                             },
                           )
@@ -91,13 +91,13 @@ class PortalCNXMLFile(CNXMLFile, File):
     meta_type='CMF CNXML File'
     security = AccessControl.ClassSecurityInfo()
 
-    security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'xpathReplaceTree')
-    security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'xpathDeleteTree')
-    security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'xpathInsertTree')
-    security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'xpathAppendTree')
-    #security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'setContent')
-    #security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'setMetadata')
-    #security.declareProtected(CMFCorePermissions.ModifyPortalContent, 'setTitle')
+    security.declareProtected(permissions.ModifyPortalContent, 'xpathReplaceTree')
+    security.declareProtected(permissions.ModifyPortalContent, 'xpathDeleteTree')
+    security.declareProtected(permissions.ModifyPortalContent, 'xpathInsertTree')
+    security.declareProtected(permissions.ModifyPortalContent, 'xpathAppendTree')
+    #security.declareProtected(permissions.ModifyPortalContent, 'setContent')
+    #security.declareProtected(permissions.ModifyPortalContent, 'setMetadata')
+    #security.declareProtected(permissions.ModifyPortalContent, 'setTitle')
 
     def __init__(self, *args, **kw):
         CNXMLFile.__init__(self, *args, **kw)
