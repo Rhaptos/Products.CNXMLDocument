@@ -7,7 +7,6 @@ Author: Brent Hendricks
 This software is subject to the provisions of the GNU Lesser General
 Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 """
-
 import AccessControl
 from Globals import InitializeClass
 from OFS.Image import cookId
@@ -86,8 +85,6 @@ class PortalCNXMLFile(CNXMLFile, File):
         A Portal-managed CNXML File
     """
 
-    __implements__ = ( File.__implements__)
-    
     meta_type='CMF CNXML File'
     security = AccessControl.ClassSecurityInfo()
 

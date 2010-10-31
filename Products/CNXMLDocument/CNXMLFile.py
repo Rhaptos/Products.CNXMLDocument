@@ -7,12 +7,12 @@ Author: Brent Hendricks
 This software is subject to the provisions of the GNU Lesser General
 Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 """
+from zope.interface import implements
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from OFS.Image import File, cookId
 from Globals import package_home
 from AccessControl import ModuleSecurityInfo
-from zope.interface import implements
 from interfaces.ICNXMLFile import ICNXMLFile
 from interfaces.IParameterManager import IParameterManager
 from interfaces.IXPathNodeEditor import IXPathNodeEditor
@@ -150,8 +150,7 @@ def manage_addCNXMLFile(self,id,file='',title='',precondition='', content_type='
 class CNXMLFile(File):
     """CNXML File"""
 
-    implements(IMDML)
-    __implements__ = ICNXMLFile, IParameterManager, IXPathNodeEditor
+    implements(IMDML, ICNXMLFile, IParameterManager, IXPathNodeEditor)
 
     meta_type = "CNXML File"
 
