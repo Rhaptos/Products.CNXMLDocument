@@ -1,3 +1,6 @@
+CNXMLDocument-0.41
+  -   fix handling of checked out malformed 0.6 CNXML
+
 CNXMLDocument-0.40
   - sword support and offline zip/epub fixes
 
