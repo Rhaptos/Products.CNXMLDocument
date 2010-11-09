@@ -35,8 +35,6 @@ contentClasses = (PortalCNXMLFile.PortalCNXMLFile,)
 
 product_globals = globals()
 
-z_bases = utils.initializeBasesPhase1(contentClasses, this_module)
-
 # Make the skins available as DirectoryViews
 registerDirectory('skins', globals())
 registerDirectory('skins/CNXMLFile', globals())
@@ -52,14 +50,12 @@ def initialize(context):
     Register base classes
     """
 
-    utils.initializeBasesPhase2( z_bases, context )
     utils.ContentInit(PortalCNXMLFile.PortalCNXMLFile.meta_type,
                       content_types = contentClasses,
                       permission = permissions.AddPortalContent,
                       extra_constructors = contentConstructors,
                       fti = PortalCNXMLFile.factory_type_information).initialize(context)
 
-    context.registerBaseClass(CNXMLFile.CNXMLFile)
     context.registerClass(CNXMLFile.CNXMLFile,
                           constructors=(CNXMLFile.manage_addCNXMLFileForm,
                                         CNXMLFile.manage_addCNXMLFile),
