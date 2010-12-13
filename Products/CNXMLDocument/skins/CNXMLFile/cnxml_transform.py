@@ -41,7 +41,7 @@ result = XMLService.xsltPipeline(doc, stylesheets, **params)
 doc.freeDoc()
 
 # Set content-type
-context.REQUEST.RESPONSE.setHeader('Content-Type', "text/html; charset=utf-8")
+context.REQUEST.RESPONSE.setHeader('Content-Type', "%s; charset=utf-8" % params['mimetype'])
 
 # Prepend doctype
 header = context.xmlheader(params['doctype'])
