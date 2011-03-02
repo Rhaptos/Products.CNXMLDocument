@@ -176,6 +176,16 @@ class CNXMLFile(File):
         self._parameters = {}
         return File.__init__(self, *args, **kwargs)
 
+    def update_data(self, data, content_type=None, size=None):
+        """ Override method in base class to convert unicode to text
+            before updating data since base class do not except unicode
+            anymore.
+        """
+        if isinstance(data, unicode):
+            data = data.encode('utf-8')
+        File.update_data(self, data, content_type, size)
+
+
     def validate(self):
         """Validate the CNXML document"""
         return XMLService.validate(self.getSource())
