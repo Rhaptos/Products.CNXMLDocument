@@ -38,6 +38,22 @@ class CNXMLComponents(BrowserView):
             return rendercnxml(source)
         return ''
       
+    def abstract_text(self):
+        """The rendered abstract/summary text of content, by itself, stripped of markup.
+        """
+        context = self.context
+        source = getattr(context, 'getRawAbstract', None)
+        source = source and source() or context.abstract
+        if source:
+            source = """<md:abstract xmlns="http://cnx.rice.edu/cnxml"
+                                    xmlns:bib="http://bibtexml.sf.net/"
+                                    xmlns:m="http://www.w3.org/1998/Math/MathML"
+                                    xmlns:md="http://cnx.rice.edu/mdml"
+                                    xmlns:q="http://cnx.rice.edu/qml/1.0">%s</md:abstract>""" % source
+            from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL
+            return rendercnxml(source, prestyles=[CNXML_SEARCHABLE_XSL])
+        return ''
+      
     def body(self):
         """The body text of a CNXML document, by itself.
         Mostly borrowed (without too much analysis) from cnx_overrides/cnxml_transform
