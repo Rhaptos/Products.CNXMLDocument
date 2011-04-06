@@ -11,7 +11,6 @@ from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument import CNXML_RENDER_XSL
 
 MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
-MATHML_XSL = 'http://cnx.rice.edu/technology/mathml/stylesheet/pmathmlcss.xsl'
 
 #CNXML_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/unibrowser.xsl'
 CNXML_XSL = CNXML_RENDER_XSL
