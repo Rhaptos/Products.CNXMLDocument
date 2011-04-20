@@ -11,7 +11,6 @@ from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument import CNXML_RENDER_XSL
 
 MATHML_NS = 'http://www.w3.org/1998/Math/MathML'
-MATHML_XSL = 'http://cnx.rice.edu/technology/mathml/stylesheet/pmathmlcss.xsl'
 
 #CNXML_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/unibrowser.xsl'
 CNXML_XSL = CNXML_RENDER_XSL
@@ -36,9 +35,6 @@ has_math = MATHML_NS in sourceNs
 params['doctype'], params['mimetype'], ns = context.content_type_decide(has_math=has_math)
 
 # Transform source
-ua = context.REQUEST.get('HTTP_USER_AGENT', '')
-if has_math and (MATHML_NS not in ns or ua.find('AppleWebKit') != -1):
-    stylesheets.append(MATHML_XSL)
 
 result = XMLService.xsltPipeline(doc, stylesheets, **params)
 doc.freeDoc()

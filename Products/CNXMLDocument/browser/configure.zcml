@@ -25,4 +25,12 @@
       attribute="abstract"
       />
 
+  <browser:page
+      for="Products.CNXMLDocument.newinterfaces.ICNXMLAbstract"
+      name="abstract_text"
+      class=".components.CNXMLComponents"
+      permission="zope.Public"
+      attribute="abstract_text"
+      />
+
 </configure>

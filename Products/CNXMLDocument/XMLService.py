@@ -114,7 +114,6 @@ class XMLParser:
         Returns the document object if successful and raises XMLParserError otherwise
         NOTE: returned object MUST be freed with .freeDoc() method
         """
-        #import pdb; pdb.set_trace()
         if type(content) is unicode:
             content = content.encode('utf-8')
         
