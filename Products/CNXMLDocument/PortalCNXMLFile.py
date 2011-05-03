@@ -107,6 +107,10 @@ class PortalCNXMLFile(CNXMLFile, File):
         # using the ATCT File, which does work.
         self.__name__ = args[0]
 
+    def _getCatalogTool(self):
+        # prevent cataloging by returning None
+        return None
+
     def setSource(self, source, idprefix=None):
         """Set the document's source; override of CNXMLFile version, to add prefix passing.
         The best method to use to set the body of the CNXMLFile.
