@@ -34,6 +34,11 @@ sourceNs = XMLService.listDocNamespaces(doc)
 has_math = MATHML_NS in sourceNs
 params['doctype'], params['mimetype'], ns = context.content_type_decide(has_math=has_math)
 
+# Get the custom style
+style = context.REQUEST.get('style', None)
+if style:
+  params[style] = 1
+
 # Transform source
 
 result = XMLService.xsltPipeline(doc, stylesheets, **params)
