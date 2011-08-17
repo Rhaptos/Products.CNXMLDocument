@@ -1,3 +1,6 @@
+CNXMLDocument-0.45
+  -  handle authors who don't have a member acccount (first bits)
+
 CNXMLDocument-0.44
   -  don't catalog CNXML Documents
 

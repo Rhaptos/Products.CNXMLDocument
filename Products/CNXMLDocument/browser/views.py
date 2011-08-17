@@ -51,15 +51,16 @@ def pivot_roles(retval,mtool):
     actors = []
     for uid in uniqs:
         m = mtool.getMemberById(uid)
-        mdata = {}
-        mdata['id'] = uid
-        mdata['shortname'] = m.getProperty('shortname')
-        mdata['firstname'] = m.getProperty('firstname')
-        mdata['surname'] = m.getProperty('surname')
-        mdata['fullname'] = m.getProperty('fullname')
-        mdata['email'] = m.getProperty('email')
-        mdata['account_type'] = m.getProperty('account_type')
-        actors.append(mdata)
+        if m:
+            mdata = {}
+            mdata['id'] = uid
+            mdata['shortname'] = m.getProperty('shortname')
+            mdata['firstname'] = m.getProperty('firstname')
+            mdata['surname'] = m.getProperty('surname')
+            mdata['fullname'] = m.getProperty('fullname')
+            mdata['email'] = m.getProperty('email')
+            mdata['account_type'] = m.getProperty('account_type')
+            actors.append(mdata)
     retval['actors'] = actors
          
     if retval.get('parent'):
