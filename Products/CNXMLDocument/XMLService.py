@@ -12,10 +12,10 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 import os
 import libxml2
 import libxslt
-#from lxml import etree
+from lxml import etree
 from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile
-#from cStringIO import StringIO
+from cStringIO import StringIO
 
 import logging
 xsltlog = logging.getLogger('xslt')
@@ -51,111 +51,25 @@ except NameError:  # JING_TESTED not assigned yet==not yet tested
         raise XMLParserError("Jing JAR file not found at %s; place it there or set environment variable 'JING_JAR' to the path where it is located. See Jing at http://www.thaiopensource.com/relaxng/jing.html" % JINGJARPATH)
 
 # Default options for libxml2 parsing
-PARSER_OPTIONS = libxml2.XML_PARSE_DTDLOAD | \
-                 libxml2.XML_PARSE_NOENT | \
-                 libxml2.XML_PARSE_NONET & \
-                 ~libxml2.XML_PARSE_DTDATTR
+#PARSER_OPTIONS = libxml2.XML_PARSE_DTDLOAD | \
+#                 libxml2.XML_PARSE_NOENT | \
+#                 libxml2.XML_PARSE_NONET & \
+#                 ~libxml2.XML_PARSE_DTDATTR
 
-class XMLParser:
-    """Internal implementation class for XMLService."""
 
-    def __init__(self, options=None, catalog=None):
-        """
-        Initialize an XML parser
-
-        options: bitwise libxml2 parser options (libxml2.XML_PARSE_*)
-        catalog: url of a local XML catalog to use.  If None, parser uses system default (/etc/xml/catalog)
-        """
-        
-        self.validate = validate
-        self.options = options
-        self.catalog = catalog
-        self._v_errors = []
-        libxml2.lineNumbersDefault(1)
-
-    def parseErrorHandler(self, data, msg, severity, *args):
-        e = libxml2.lastError()
-        self._v_errors.append( (e.line(), msg) )
-
-    def getErrors(self):
-        """
-        Return the errors collected while parsing
-        """
-        return self._v_errors
-
-    def _doParse(self, parser):
-        
-        # Set requested options
-        if self.options:
-            parser.ctxtUseOptions(self.options)
-        if self.catalog:
-            parser.addLocalCatalog(catalog)
-
-        self._v_errors = []
-        parser.setErrorHandler(self.parseErrorHandler, None)
-
-        r = parser.parseDocument()
-        self._v_errors.sort(lambda x, y: cmp(x[0], y[0]))
-
-        doc = parser.doc()
-        del parser
-
-        if r == 0 and len(self._v_errors) == 0:
-            return doc
-        else:
-            doc.freeDoc()
-            msg = '\n'.join(['Line %d: %s' % (line, error) for line, error in self._v_errors])
-            raise XMLParserError, "Error: could not parse document: %s" % msg
-
-    def parseString(self, content):
-        """
-        Parse string content into xmlDoc object
-
-        Returns the document object if successful and raises XMLParserError otherwise
-        NOTE: returned object MUST be freed with .freeDoc() method
-        """
-        #import pdb; pdb.set_trace()
-        if type(content) is unicode:
-            content = content.encode('utf-8')
-        
-        try:
-            parser = libxml2.createMemoryParserCtxt(content, len(content))
-        except libxml2.parserError:
-            raise XMLParserError, "Error: could not parse document"
-
-        return self._doParse(parser)
-
-    def parseUrl(self, url):
-        """
-        Retrieve and parse the document at the provided URL.
-
-        Returns the document object if successful and raises XMLParserError otherwise
-        NOTE: returned object MUST be freed with .freeDoc() method
-
-        Note: Any specified catalog will only be used to resolve entities internal
-        to the document, not the url passed-in
-        """
-        try:
-            parser = libxml2.createFileParserCtxt(url)
-        except libxml2.parserError:
-            raise XMLParserError, "Error: could not parse document"
-
-        return self._doParse(parser)
 
 def parseString(content):
     """
     Convenience function to parse string with sensible default options. Private: do not use.
     """
-    parser = XMLParser(options=PARSER_OPTIONS)
-    doc = parser.parseString(content)
+    doc = etree.parse(StringIO(content))
     return doc
 
 def parseUrl(url):
     """
     Convenience function to parse file with sensible default options. Private: do not use.
     """
-    parser = XMLParser(options=PARSER_OPTIONS)
-    doc = parser.parseUrl(url)
+    doc = etree.parse(url)
     return doc
         
 def normalize(content):
@@ -164,15 +78,16 @@ def normalize(content):
     'content' is a string of the XML document to be normalized.
     """
     doc = parseString(content)
-    result = doc.serialize(encoding='utf-8')
-    doc.freeDoc()
+    result = etree.tostring(doc.getroot())
     return result
+
 
 #_relaxngdocs = {}  # already-compiled relaxng validators
 _urlmaps = {}
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.6/cnxml.rng"] = "/usr/share/xml/cnxml/schema/rng/0.6/cnxml-jing.rng"
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml.rng"] = "/usr/share/xml/cnxml/schema/rng/0.7/cnxml-jing.rng"
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml-fragment.rng"] = "/usr/share/xml/cnxml/schema/rng/0.7/cnxml-fragment-jing.rng"
+
 def validate(content, url="http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml.rng"): 
     """
     Convenience function for validating content. Public.
@@ -251,13 +166,6 @@ def validate(content, url="http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/c
         #return [(x.line, x.message) for x in relaxng.error_log]
     #return []
 
-def _quoteParam(param):
-    if type(param) == type(0):
-        return "%d" % param
-    else:
-        return "'%s'" % param
-      
-
 def transform(content, stylesheet, **params):
     """
     Perform an XSLT transformation on the provided content. Public.
@@ -272,7 +180,6 @@ def transform(content, stylesheet, **params):
     try:
         doc = parseString(content)
         result = xsltPipeline(doc, [stylesheet], **params)
-        doc.freeDoc()
     except libxml2.parserError, e:
         raise XMLError, e
 
@@ -289,10 +196,6 @@ def xsltPipeline(doc, stylesheets, **params):
     """
     xsltlog.debug("XSL Pipeline: %s (%s)" % (stylesheets, params))
 
-    # libxslt requires parameters to be quoted
-    for key in params.keys():
-        params[key] = _quoteParam(params[key])
-
     # If pipeline is empty just serialize doc
     if not len(stylesheets):
         return doc.serialize()
@@ -300,34 +203,15 @@ def xsltPipeline(doc, stylesheets, **params):
     source = doc
     style = None
     for s in stylesheets:
-        # Free stylesheet from previous loop iteration.  We do this
-        # here so that the last stylesheet doesn't get freed until
-        # after its used to  serialize the result
-        if style is not None:
-            style.freeStylesheet()
-
         styledoc = parseUrl(s)
-        style = libxslt.parseStylesheetDoc(styledoc)  # TODO: keep stylesheet around
+        style = etree.XSLT(styledoc)# TODO: keep stylesheet around
         if not style:
             raise XSLTError, "Error parsing %s" % s
-        output = style.applyStylesheet(source, params)
-        
-        # Don't free the original source doc
-        if source != doc:
-            source.freeDoc()
+        #output = style.apply(source, **params)
+        output = style.apply(source)
         source = output
 
-    try:
-        # Use the last stylesheet to serialize the output (part of the transform may have to do with
-        # serialization of the document)
-        result = style.saveResultToString(output)
-    except SystemError:
-        # might fail on empty files, so use alternate serialization
-        result = output.serialize()
-
-    style.freeStylesheet()
-    output.freeDoc()
-    
+    result = str(output)
     return result
 
 
@@ -337,29 +221,13 @@ def listDocNamespaces(doc):
     # from a parsed document
     # TODO: this requres a parsed doc, which we want to be rid of.
     ns = {}
-    for node in doc.walk_depth_first():
-        if node.type == 'element':
-            try:
-                n = node.ns()
-            except libxml2.treeError:
-                continue
-            if n:
-                ns[n.content] = 1
-                
-            for n in nodeNamespaces(node):
-                ns[n.content] = 1
+    for node in doc.iter():
+        ns.update({}.fromkeys(node.nsmap.values()))
 
     namespaces = ns.keys()
     namespaces.sort()
 
     return namespaces
-
-def nodeNamespaces(node):
-    """Generator to iterate over namespaces defined on a node"""
-    n = node.nsDefs()
-    while n:
-        yield n
-        n = n.next
 
 def _normalizeFile(filename):
     f = open(filename)

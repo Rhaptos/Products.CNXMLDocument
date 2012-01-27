@@ -37,7 +37,6 @@ params['doctype'], params['mimetype'], ns = context.content_type_decide(has_math
 # Transform source
 
 result = XMLService.xsltPipeline(doc, stylesheets, **params)
-doc.freeDoc()
 
 # Set content-type
 context.REQUEST.RESPONSE.setHeader('Content-Type', "%s; charset=utf-8" % params['mimetype'])

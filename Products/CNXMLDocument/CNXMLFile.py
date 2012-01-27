@@ -23,6 +23,7 @@ import types
 import logging
 import XMLService
 import libxml2
+from lxml import etree
 from xml.dom import minidom
 from CNXMLVersionRecognizer import Recognizer
 
@@ -75,7 +76,6 @@ def autoUpgrade(source, **params):
         try:
             doc = XMLService.parseString(source)
             result = XMLService.xsltPipeline(doc, stylesheets, **params)
-            doc.freeDoc()
             return result, True
         except XMLService.XMLParserError:
             pass  # just stopping on parse error is okay; it'll send us to the fallback below
@@ -101,7 +101,6 @@ def autoIds(source, prefix=None, force=False, **params):
             doc = XMLService.parseString(source)   # may error if malformed
             # TODO: if slow, we could replace with Expat 2-pass method
             result = XMLService.xsltPipeline(doc, stylesheets, **params)
-            doc.freeDoc()
             return result
         except XMLService.XMLParserError:
             pass  # just stopping on parse error is okay; it'll send us to the fallback below
@@ -284,14 +283,12 @@ class CNXMLFile(File):
         """
         Return the parsed XML document
 
-        NOTE: The result must be freed with .freeDoc()
         """
         return XMLService.parseString(self.getSource())
 
     def rootNode(self):
         doc = self._parseDoc()
-        content = doc.getRootElement().serialize()
-        doc.freeDoc()
+        content = etree.tostring(doc.getroot())
 
         return content
 
@@ -358,7 +355,6 @@ class CNXMLFile(File):
             #content = newroot.serialize()
             #newdoc.freeDoc()
 
-        doc.freeDoc()
 
         # this prevents IE from caching the result
         request = getattr(self, 'REQUEST', None)

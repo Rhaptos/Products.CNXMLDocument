@@ -1,3 +1,5 @@
+  - remove libxml2 in favor of lxml
+
 CNXMLDocument-0.45
   -  handle authors who don't have a member acccount (first bits)
 
