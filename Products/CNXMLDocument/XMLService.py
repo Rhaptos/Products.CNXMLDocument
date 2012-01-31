@@ -202,7 +202,7 @@ def xsltPipeline(doc, stylesheets, **params):
 
     # If pipeline is empty just serialize doc
     if not len(stylesheets):
-        return doc.serialize()
+        return etree.tostring(doc)
 
     source = doc
     style = None
