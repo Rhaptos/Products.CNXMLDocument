@@ -4,8 +4,7 @@ import os, sys
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
-import libxml2
-import libxslt
+from lxml import etree
 from BaseTestCase import BaseTestCase
 from Products.CNXMLDocument import XMLService
 
@@ -40,14 +39,12 @@ class ParseDoc(BaseTestCase):
     def testParseDocumentReturnsXMLDoc(self):
         """parseDoc must return an xmlDoc"""
         doc = XMLService.parseDoc(noNS)
-        self.failUnless(isinstance(doc, libxml2.xmlDoc))
-        doc.freeDoc()
+        self.failUnless(isinstance(doc, etree._ElementTree))
 
     def testParseDocument(self):
         """return of parseDoc must serializes correctly"""
         doc = XMLService.parseDoc(noNS)
-        self.assertEquals(doc.serialize(), '<?xml version="1.0"?>\n<tag>Hello</tag>\n')
-        doc.freeDoc()
+        self.assertEquals(etree.tostring(doc), '<tag>Hello</tag>')
 
 
 class XsltPipeline(BaseTestCase):
@@ -58,20 +55,17 @@ class XsltPipeline(BaseTestCase):
     def testEmptyPipeline(self):
         """xsltPipeline must serialize original doc if pipeline is empty"""
         doc = XMLService.parseDoc(noNS)
-        self.assertEquals(XMLService.xsltPipeline(doc, []), '<?xml version="1.0"?>\n<tag>Hello</tag>\n')
-        doc.freeDoc()
+        self.assertEquals(XMLService.xsltPipeline(doc, []), '<tag>Hello</tag>')
 
     def testSingleTransform(self):
         """xsltPipeline must correctly perform single transform"""
         doc = XMLService.parseDoc(noNS)
         self.assertEquals(XMLService.xsltPipeline(doc, ['test.xsl']), 'Success')
-        doc.freeDoc()
 
     def testDoubleTransform(self):
         """xsltPipeline must correctly perform double transform"""
         doc = XMLService.parseDoc(noNS)
         self.assertEquals(XMLService.xsltPipeline(doc, ['step1.xsl', 'step2.xsl']), 'Success')
-        doc.freeDoc()
 
 def test_suite():
     from unittest import TestSuite, makeSuite

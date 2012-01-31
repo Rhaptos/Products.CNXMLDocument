@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 """
-XMLService - wrapper around libxml2 to provide basic XML services
+XMLService - wrapper around libxml2 using lxml to provide basic XML services
 
-Author: Brent Hendricks
-(C) 2005 Rice University
+Author: Brent Hendricks, Ross Reedstrom
+(C) 2005,2012 Rice University
 
 This software is subject to the provisions of the GNU Lesser General
 Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 """
 
 import os
-import libxml2
-import libxslt
 from lxml import etree
 from subprocess import Popen, PIPE
 from tempfile import NamedTemporaryFile
@@ -62,15 +60,21 @@ def parseString(content):
     """
     Convenience function to parse string with sensible default options. Private: do not use.
     """
-    doc = etree.parse(StringIO(content))
-    return doc
+    try:
+        doc = etree.ElementTree(etree.fromstring(content))
+        return doc
+    except etree.XMLSyntaxError, e:
+        raise XMLParserError, e
 
 def parseUrl(url):
     """
     Convenience function to parse file with sensible default options. Private: do not use.
     """
-    doc = etree.parse(url)
-    return doc
+    try:
+        doc = etree.parse(url)
+        return doc
+    except etree.XMLSyntaxError, e:
+        raise XMLParserError, e
         
 def normalize(content):
     """
@@ -180,7 +184,7 @@ def transform(content, stylesheet, **params):
     try:
         doc = parseString(content)
         result = xsltPipeline(doc, [stylesheet], **params)
-    except libxml2.parserError, e:
+    except etree.XMLSyntaxError, e:
         raise XMLError, e
 
     return result
@@ -219,7 +223,7 @@ def listDocNamespaces(doc):
     """Return a list of namespaces declared in the document. Public."""
     # XXX: There really ought to be a better way to get the namespaces
     # from a parsed document
-    # TODO: this requres a parsed doc, which we want to be rid of.
+    # TODO: this requires a parsed doc, which we want to be rid of.
     ns = {}
     for node in doc.iter():
         ns.update({}.fromkeys(node.nsmap.values()))

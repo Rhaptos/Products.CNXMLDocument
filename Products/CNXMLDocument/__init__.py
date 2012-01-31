@@ -10,7 +10,6 @@ Public License Version 2.1 (LGPL).  See LICENSE.txt for details.
 
 import CNXMLFile
 import PortalCNXMLFile
-import libxml2
 import os
 
 from Globals import package_home
@@ -45,7 +44,6 @@ registerDirectory('skins/CNXMLFile', globals())
 from AccessControl import allow_module, allow_class
 from Products.CNXMLDocument import XMLService
 allow_module('Products.CNXMLDocument.XMLService')
-allow_class(libxml2.xmlDoc)
 
 def initialize(context):
     """

@@ -22,9 +22,7 @@ import re
 import types
 import logging
 import XMLService
-import libxml2
 from lxml import etree
-from xml.dom import minidom
 from CNXMLVersionRecognizer import Recognizer
 
 log = logging.getLogger('CNXMLDocument.CNXMLFile')
@@ -56,6 +54,16 @@ STYLESHEET_BASE = "/usr/local/share/swi"
 ## upgrade service
 UPGRADE_05_TO_06_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/cnxml05to06.xsl'
 UPGRADE_06_TO_07_XSL = 'http://cnx.rice.edu/technology/cnxml/stylesheet/cnxml06to07.xsl'
+
+## FIXME EVIL EVIL NAMESPACE HARDCODED PREFIXES FOR EIP
+
+NAMESPACES = {'cnx':'http://cnx.rice.edu/cnxml',
+              'md':'http://cnx.rice.edu/mdml/0.4',
+              'bib':'http://bibtexml.sf.net/',
+              'm':'http://www.w3.org/1998/Math/MathML',
+              'x':'http://www.w3.org/1999/xhtml',
+              'q':'http://cnx.rice.edu/qml/1.0'}
+
 def autoUpgrade(source, **params):
     """Turn older CNXML (0.5/0.6) into newer (0.7).
     Checks version to determine if upgrade is needed.
@@ -106,11 +114,9 @@ def autoIds(source, prefix=None, force=False, **params):
             pass  # just stopping on parse error is okay; it'll send us to the fallback below
     return source
 
-## error handling
-libxml2log = logging.getLogger('libxml2 error')
-def error_handler(*args):
-    libxml2log.info(str(args))
-libxml2.registerErrorHandler(error_handler, None)
+## error logging/handling
+
+etree.use_global_python_log(etree.PyErrorLog())
 
 class CNXMLFileError(Exception):
     pass
@@ -243,22 +249,7 @@ class CNXMLFile(File):
 
     def _xpathEval(self, doc, xpath):
         """Evaluate a XPath expression and return the results"""
-        try:
-            root = doc.getRootElement()
-        except libxml2.treeError, e:
-            raise CNXMLFileError, "CNXMLFile does not parse"
-
-        ctx = doc.xpathNewContext()
-        ns = root.ns()
-        if ns is not None:
-            ctx.xpathRegisterNs("cnx", ns.content)
-        try:
-            result = ctx.xpathEval(xpath)
-        except libxml2.xpathError, e:
-            ctx.xpathFreeContext()
-            raise XPathError, e
-
-        ctx.xpathFreeContext()
+        result = doc.xpath(xpath,namespaces=NAMESPACES)
         return result
 
     def _getXPathNode(self, doc, xpath):
@@ -300,61 +291,8 @@ class CNXMLFile(File):
         try:
             node = self._getXPathNode(doc, xpath)
         except (CNXMLFileError, XPathError):
-            doc.freeDoc()
             raise
-        content = node.serialize()
-        if namespaces:
-            ## attach namespaces from original document to fragment node
-            ## (with hacky DOM manipulation, etc, since I can't get libxml2 to do it right. see below)
-            
-            # build full namespace string, for dummy root wrapper element
-            ns = node.ns()  # ns is a C linked list, linked on 'next' attr (pointer)
-            nsstr = ""
-            while ns:
-                nsstr += str(ns)
-                ns = ns.next
-            
-            # create a dummy "wrapper" element with all namespaces, so minidom can parse the thing if
-            # we have elements with namespace prefixes
-            # (we trust there's no XML declarations or similar obstacles outside the real element,
-            # which would interfere, since 'content' has just come direct from 'node.serialize()'.)
-            content = "<div %s>%s</div>" % (nsstr, content)
-            
-            # insert namespaces inside base element with minidom, which treats them as attributes
-            # this is much easier than doing our own XML parsing to find the right insertion point
-            ns = node.ns()  # ns is a C linked list, linked on 'next' attr (pointer)
-            dom = minidom.parseString(content)
-            domroot = dom.documentElement.childNodes[0]
-            while ns:
-                nsname = ns.name and "xmlns:%s" % ns.name or "xmlns"
-                domroot.setAttribute(nsname, ns.content)
-                ns = ns.next
-            content = domroot.toxml()
-            dom.unlink()
-            
-            # libxml2 attempts that don't work
-            # see http://xmlsoft.org/html/libxml-tree.html
-            
-            # take the node out of its original context, put it in a new doc,
-            # make namespace reconciliation put the namespace declarations in there
-            #node.unlinkNode()
-            #newdoc = libxml2.newDoc("1.0")
-            #newdoc.setRootElement(node)
-            #newdoc.reconciliateNs(node)
-            #content = node.serialize()
-            #newdoc.freeDoc()  # <-- fails with libxml2 crash. why? dunno.
-            
-            # create new doc from serialized text, and try to apply namespaces
-            # but: default namespace is given the 'default:' prefix instead of being real default
-            # ...which it should not do, and apparently doesn't if you're directly in C
-            # (and, maybe, doesn't set multiple namespaces with setNs)
-            #newdoc = libxml2.parseDoc(node.serialize())
-            #newroot = newdoc.getRootElement()
-            #newroot.setNs(node.ns())
-            #newdoc.reconciliateNs(newroot)
-            #content = newroot.serialize()
-            #newdoc.freeDoc()
-
+        content = etree.tostring(node)
 
         # this prevents IE from caching the result
         request = getattr(self, 'REQUEST', None)
@@ -373,36 +311,18 @@ class CNXMLFile(File):
         try:
             node = self._getXPathNode(doc, xpath)
         except (CNXMLFileError, XPathError):
-            doc.freeDoc()
             raise
 
         try:
-            newDoc = libxml2.parseDoc(xmlText)
-        except libxml2.parserError, e:
-            doc.freeDoc()
+            newNode = etree.fromstring(xmlText)
+        except etree.XMLSyntaxError, e:
             raise ValueError, "Bad xml:%s" % xmlText
 
-        newNode = newDoc.getRootElement()
-        newNode.unlinkNode()
+        node.getparent().replace(node,newNode)
+        newxpath = doc.getpath(newNode)
 
-        root = doc.getRootElement()
-        removed = newNode.removeNsDef(None)
-
-        node.replaceNode(newNode)
-        newxpath = newNode.nodePath()  # could probably use 'xpath' also, but use the same method as add/insert
-        node.unlinkNode()
-        node.freeNode()
-        doc.reconciliateNs(root)
-
-        newDoc.freeDoc()
-
-        # Free the removed namespace nodes only *after* reconciliation
-        if removed:
-            removed.freeNsList()
-
-        source = doc.serialize()
+        source = etree.tostring(doc)
         self.setSource(source, idprefix=idprefix)
-        doc.freeDoc()
         
         return newxpath
 
@@ -414,14 +334,11 @@ class CNXMLFile(File):
         try:
             node = self._getXPathNode(doc, xpath)
         except (CNXMLFileError, XPathError):
-            doc.freeDoc()
             raise
 
-        node.unlinkNode()
-        node.freeNode()
-        source = doc.serialize()
+        node.getparent().remove(node)
+        source = etree.tostring(doc)
         self.setSource(source)
-        doc.freeDoc()
 
     def xpathInsertTree(self, xpath, xmlText, idprefix=None):
         """Insert a tree into the document.
@@ -444,34 +361,22 @@ class CNXMLFile(File):
         try:
             node = self._getXPathNode(doc, xpath)
         except (CNXMLFileError, XPathError):
-            doc.freeDoc()
             raise
 
         try:
-            newDoc = libxml2.parseDoc(xmlText)
-        except libxml2.parserError, e:
-            doc.freeDoc()
+            newNode = etree.fromstring(xmlText)
+        except etree.XMLSyntaxError, e:
             raise ValueError, "Bad xml:%s" % xmlText
 
-        newNode = newDoc.getRootElement()
-        removed = newNode.removeNsDef(None)
-
         if position =='before':
-            node.addPrevSibling(newNode)
+            node.addprevious(newNode)
         else:
-            node.addNextSibling(newNode)
-        doc.reconciliateNs(doc.getRootElement())
+            node.addnext(newNode)
         
-        newxpath = newNode.nodePath()
+        newxpath = doc.getpath(newNode)
 
-        # Free the removed namespace nodes only *after* reconciliation
-        if removed:
-            removed.freeNsList()
-
-        source = doc.serialize()
+        source = etree.tostring(doc)
         self.setSource(source, idprefix=idprefix)
-        newDoc.freeDoc()
-        doc.freeDoc()
 
         return newxpath
 
@@ -718,8 +623,8 @@ class CNXMLFile(File):
             nodes = None
         if nodes:
             for node in nodes:
-                if node.hasProp('src'):
-                    strFile = node.hasProp('src').getContent()
+                strFile = node.get('src')
+                if strFile:
                     strBaseFile = strFile.split('/')[-1]
                     # massage strFile; remove http if possible (Python Gods chortle, from on high)
                     if strFile.startswith('http://cnx.org/'):
@@ -743,12 +648,9 @@ class CNXMLFile(File):
                                 strFile = objFile.absolute_url(1)
                                 setResult.add(strFile)
                                 objFile = None
-                                node.hasProp('src').setContent(strBaseFile)
+                                node.set('src',strBaseFile)
         listResults = list(setResult)
         if listResults:
-            # no idea what this does or if it is needed ...
-            doc.reconciliateNs(doc.getRootElement())
-            strCnxml = doc.serialize()
+            strCnxml = etree.tostring(doc)
             self.setSource(strCnxml)
-        doc.freeDoc()
         return listResults

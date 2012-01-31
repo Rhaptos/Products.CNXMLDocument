@@ -1,7 +1,6 @@
 # BaseTestCase
 from Testing import ZopeTestCase
 from Products.CNXMLDocument.CNXMLFile import CNXMLFile
-import libxml2
 
 baseDoc = \
 """<?xml version="1.0"?>
@@ -17,10 +16,3 @@ class BaseTestCase(ZopeTestCase.ZopeTestCase):
 
     def afterSetUp(self):
         self.doc = CNXMLFile('test', '', baseDoc)
-        libxml2.debugMemory(1)
-
-    def beforeTearDown(self):
-        libxml2.cleanupParser()
-        if libxml2.debugMemory(1):
-            print "Memory leak %d bytes" % (libxml2.debugMemory(1))
-        libxml2.dumpMemory()
