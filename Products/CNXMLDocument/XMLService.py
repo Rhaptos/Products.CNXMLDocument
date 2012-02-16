@@ -204,6 +204,7 @@ def xsltPipeline(doc, stylesheets, **params):
     if not len(stylesheets):
         return etree.tostring(doc)
 
+    import pdb;pdb.set_trace()
     source = doc
     style = None
     for s in stylesheets:
