@@ -50,7 +50,7 @@ class CNXMLComponents(BrowserView):
                                     xmlns:md="http://cnx.rice.edu/mdml"
                                     xmlns:q="http://cnx.rice.edu/qml/1.0">%s</md:abstract>""" % source
 	    doc = XMLService.parseString(source)
-	    result = XMLService.xsltPipeline(doc, CNXML_SEARCHABLE_XSL)
+	    result = XMLService.xsltPipeline(doc, [CNXML_SEARCHABLE_XSL])
 	    return result
         return ''
       
