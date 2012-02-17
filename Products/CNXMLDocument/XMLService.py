@@ -202,10 +202,10 @@ def xsltPipeline(doc, stylesheets, **params):
 
     for k,v in params.items():
         vs = str(v)
-        if ' ' in vs:
-            params[k]='"%s"' % str(v)
-        else:
+        if type(v) in [int, long, float]:
             params[k]='%s' % str(v)
+        else:
+            params[k]='"%s"' % str(v)
 
     # If pipeline is empty just serialize doc
     if not len(stylesheets):
