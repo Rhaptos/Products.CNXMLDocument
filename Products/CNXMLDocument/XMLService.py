@@ -200,6 +200,13 @@ def xsltPipeline(doc, stylesheets, **params):
     """
     xsltlog.debug("XSL Pipeline: %s (%s)" % (stylesheets, params))
 
+    for k,v in params.items():
+        vs = str(v)
+        if ' ' in vs:
+            params[k]='"%s"' % str(v)
+        else:
+            params[k]='%s' % str(v)
+
     # If pipeline is empty just serialize doc
     if not len(stylesheets):
         return etree.tostring(doc)
@@ -211,8 +218,8 @@ def xsltPipeline(doc, stylesheets, **params):
         style = etree.XSLT(styledoc)# TODO: keep stylesheet around
         if not style:
             raise XSLTError, "Error parsing %s" % s
-        #output = style.apply(source, **params)
-        output = style.apply(source)
+        output = style(source, **params)
+        #output = style.apply(source)
         source = output
 
     result = str(output)
