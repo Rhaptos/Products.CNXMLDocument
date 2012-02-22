@@ -201,7 +201,6 @@ def xsltPipeline(doc, stylesheets, **params):
     xsltlog.debug("XSL Pipeline: %s (%s)" % (stylesheets, params))
 
     for k,v in params.items():
-        vs = str(v)
         if type(v) in [int, long, float]:
             params[k]='%s' % str(v)
         else:
