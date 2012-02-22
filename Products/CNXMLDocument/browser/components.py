@@ -1,6 +1,6 @@
 from Products.Five import BrowserView
 
-from Products.CNXMLDocument import CNXML_RENDER_XSL
+from Products.CNXMLDocument import CNXML_RENDER_XSL, CNXML_SEARCHABLE_XSL
 from Products.CNXMLDocument import XMLService
 from Products.CNXMLDocument.XMLService import XMLError
 
@@ -15,7 +15,6 @@ def rendercnxml(source, prestyles=()):
     
     doc = XMLService.parseString(source)
     result = XMLService.xsltPipeline(doc, stylesheets, **params)
-    doc.freeDoc()
     return result
 
 
@@ -50,8 +49,9 @@ class CNXMLComponents(BrowserView):
                                     xmlns:m="http://www.w3.org/1998/Math/MathML"
                                     xmlns:md="http://cnx.rice.edu/mdml"
                                     xmlns:q="http://cnx.rice.edu/qml/1.0">%s</md:abstract>""" % source
-            from Products.CNXMLDocument import CNXML_SEARCHABLE_XSL
-            return rendercnxml(source, prestyles=[CNXML_SEARCHABLE_XSL])
+	    doc = XMLService.parseString(source)
+	    result = XMLService.xsltPipeline(doc, [CNXML_SEARCHABLE_XSL])
+	    return result
         return ''
       
     def body(self):
