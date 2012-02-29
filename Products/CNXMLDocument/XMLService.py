@@ -54,6 +54,12 @@ except NameError:  # JING_TESTED not assigned yet==not yet tested
 #                 libxml2.XML_PARSE_NONET & \
 #                 ~libxml2.XML_PARSE_DTDATTR
 
+PARSER_OPTIONS={'load_dtd':True,
+                'resolve_entities':True,
+                'no_network':True,
+                'attribute_defaults':False,
+                }
+
 
 
 def parseString(content):
@@ -61,7 +67,8 @@ def parseString(content):
     Convenience function to parse string with sensible default options. Private: do not use.
     """
     try:
-        doc = etree.ElementTree(etree.fromstring(content))
+        parser = etree.XMLParser(**PARSER_OPTIONS)
+        doc = etree.ElementTree(etree.fromstring(content, parser=parser))
         return doc
     except etree.XMLSyntaxError, e:
         raise XMLParserError, e
@@ -71,7 +78,8 @@ def parseUrl(url):
     Convenience function to parse file with sensible default options. Private: do not use.
     """
     try:
-        doc = etree.parse(url)
+        parser = etree.XMLParser(**PARSER_OPTIONS)
+        doc = etree.parse(url, parser=parser)
         return doc
     except etree.XMLSyntaxError, e:
         raise XMLParserError, e
