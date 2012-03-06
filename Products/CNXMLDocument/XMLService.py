@@ -48,11 +48,7 @@ except NameError:  # JING_TESTED not assigned yet==not yet tested
         log.error('Error attempting to run Jing. Java message: "%s"' % err)
         raise XMLParserError("Jing JAR file not found at %s; place it there or set environment variable 'JING_JAR' to the path where it is located. See Jing at http://www.thaiopensource.com/relaxng/jing.html" % JINGJARPATH)
 
-# Default options for libxml2 parsing
-#PARSER_OPTIONS = libxml2.XML_PARSE_DTDLOAD | \
-#                 libxml2.XML_PARSE_NOENT | \
-#                 libxml2.XML_PARSE_NONET & \
-#                 ~libxml2.XML_PARSE_DTDATTR
+# Default options for xml parsing
 
 PARSER_OPTIONS={'load_dtd':True,
                 'resolve_entities':True,
