@@ -1,3 +1,4 @@
+CNXMLDocument-0.46
   - remove libxml2 in favor of lxml
 
 CNXMLDocument-0.45

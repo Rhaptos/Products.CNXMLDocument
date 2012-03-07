@@ -27,7 +27,7 @@ setup(name='Products.CNXMLDocument',
       zip_safe=False,
       install_requires=[
           'setuptools',
-	  'lxml',
+	  #   'lxml',
       ],
       tests_require = [
            'zope.testing>=3.5',
