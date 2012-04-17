@@ -612,10 +612,13 @@ class CNXMLFile(File):
         except IndexError:
             return None
 
-    def findReferencedWorkFiles(self, context):
+    def findReferencedWorkFiles(self, context=None):
         setResult = set() # set object can not have duplicates
-        xpath = "//cnx:media"
+        xpath = "//cnx:*[@src]"
         doc = self._parseDoc()
+        portal_url = self.portal_url()
+        if not context:
+            context = self
         try:
             nodes = self._getXPathNodes(doc, xpath)
         except:
@@ -626,25 +629,19 @@ class CNXMLFile(File):
                 strFile = node.get('src')
                 if strFile:
                     strBaseFile = strFile.split('/')[-1]
-                    # massage strFile; remove http if possible (Python Gods chortle, from on high)
-                    if strFile.startswith('http://cnx.org/'):
-                        strFile = strFile.replace('http://cnx.org/', '', 1)
-                    if strFile.startswith('http://cnx.rice.edu/'):
-                        strFile = strFile.replace('http://cnx.rice.edu/', '', 1)
+                    # massage strFile; remove portal_url to make 'external' cut & paste URLs internal
+                    if strFile.startswith(portal_url):
+                          strFile = strFile[len(portal_url):]
+                    # skip external links
                     if not strFile.startswith('http://'):
-                        # '/' and './' make sense between browser & server, but not to restrictedTraverse()
-                        if strFile.startswith('/'):
-                             strFile = strFile.replace('/', '', 1)
-                        if strFile.startswith('./'):
-                             strFile = strFile.replace('./', '', 1)
                         try:
                             objFile = context.restrictedTraverse(strFile)
                         except:
                             log.info("findReferencedWorkFiles restrictedTraverse() fails.")
                             objFile = None
-                        if objFile:
-                            strPortalType = objFile.aq_parent.portal_type # 'Workspace' or 'Module' or 'Workgroup'
-                            if strPortalType == 'Workspace' or strPortalType == 'Workgroup':
+                        if objFile and objFile.portal_type == 'UnifiedFile': # Where does it really live?
+                            strPortalType = objFile.aq_inner.aq_parent.portal_type 
+                            if strPortalType in ['Workspace','Workgroup']:
                                 strFile = objFile.absolute_url(1)
                                 setResult.add(strFile)
                                 objFile = None
