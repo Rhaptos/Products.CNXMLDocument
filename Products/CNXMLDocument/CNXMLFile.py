@@ -617,6 +617,7 @@ class CNXMLFile(File):
         xpath = "//cnx:*[@src]"
         doc = self._parseDoc()
         portal_url = self.portal_url()
+        portal_path = self.portal_url.getPortalPath()
         if not context:
             context = self
         try:
@@ -631,7 +632,7 @@ class CNXMLFile(File):
                     strBaseFile = strFile.split('/')[-1]
                     # massage strFile; remove portal_url to make 'external' cut & paste URLs internal
                     if strFile.startswith(portal_url):
-                          strFile = strFile[len(portal_url):]
+                          strFile = portal_path + strFile[len(portal_url):]
                     # skip external links
                     if not strFile.startswith('http://'):
                         try:
