@@ -1,7 +1,10 @@
 <metadata xmlns:tal="http://xml.zope.org/namespaces/tal"
           xmlns:metal="http://xml.zope.org/namespaces/metal"
           xmlns:md="http://cnx.rice.edu/mdml"
-          tal:define="metadata view/metadata"
+          tal:define="metadata view/metadata;
+                      license_data context/getLicenseData;
+                      license_name license_data/name;
+                      license_version license_data/version"
           mdml-version="0.5">
   <!-- WARNING! The 'metadata' section is read only. Do not edit below.
        Changes to the metadata section in the source will not be saved. -->
@@ -51,7 +54,7 @@
   </md:roles>
 
   <md:license url="http://creativecommons.org/licenses/by/2.0/"
-              tal:attributes="url metadata/license" />
+              tal:attributes="url metadata/license" tal:content="string:$license_name $license_version">Creative Commons Attribution License 2.0</md:license>
   <!-- For information on license requirements for use or modification, see license url in the
        above <md:license> element.
        For information on formatting required attribution, see the URL:
