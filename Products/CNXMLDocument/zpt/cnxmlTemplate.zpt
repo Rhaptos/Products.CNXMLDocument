@@ -5,7 +5,7 @@
           xmlns:bib="http://bibtexml.sf.net/"
           xmlns:m="http://www.w3.org/1998/Math/MathML"
           xmlns:q="http://cnx.rice.edu/qml/1.0"
-          xmlns:data="http://dev.w3.org/html5/spec/#custom"
+          xmlns:data="http://www.w3.org/TR/html5/dom.html#custom-data-attribute"
           cnxml-version="0.7"
           tal:attributes="id options/objectId;
                           module-id options/objectId">
