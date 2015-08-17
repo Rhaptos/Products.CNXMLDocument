@@ -50,7 +50,7 @@ except NameError:  # JING_TESTED not assigned yet==not yet tested
 
 # Default options for xml parsing
 
-PARSER_OPTIONS={'load_dtd':True,
+PARSER_OPTIONS={ 'load_dtd':True,
                 'resolve_entities':True,
                 'no_network':True,
                 'attribute_defaults':False,
@@ -64,7 +64,8 @@ def parseString(content):
     """
     try:
         parser = etree.XMLParser(**PARSER_OPTIONS)
-        doc = etree.ElementTree(etree.fromstring(content, parser=parser))
+        elem = etree.fromstring(content, parser=parser)
+        doc = etree.ElementTree(elem)
         return doc
     except etree.XMLSyntaxError, e:
         raise XMLParserError, e
