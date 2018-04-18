@@ -1,3 +1,7 @@
+CNXMLDocument-0.50
+  - add support for cnxml-0.8 (default still 0.7)
+  - CNXLFile now validates based on content version (0.7, 0.8)
+
 CNXMLDocument-0.49
   - support data-* attributes w/ correct URI
 

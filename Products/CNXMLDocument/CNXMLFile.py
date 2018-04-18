@@ -184,7 +184,8 @@ class CNXMLFile(File):
 
     def validate(self):
         """Validate the CNXML document"""
-        return XMLService.validate(self.getSource())
+        schema_url = 'http://cnx.rice.edu/technology/cnxml/schema/rng/%s/cnxml.rng' % (self.getVersion())
+        return XMLService.validate(self.getSource(), schema_url)
 
     def createTemplate(self, **kw):
         """Set the file data via a template"""
