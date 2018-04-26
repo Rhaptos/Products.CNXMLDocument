@@ -95,9 +95,11 @@ def normalize(content):
 _urlmaps = {}
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.6/cnxml.rng"] = "/usr/share/xml/cnxml/schema/rng/0.6/cnxml-jing.rng"
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml.rng"] = "/usr/share/xml/cnxml/schema/rng/0.7/cnxml-jing.rng"
+_urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.8/cnxml.rng"] = "/usr/share/xml/cnxml/schema/rng/0.8/cnxml-jing.rng"
 _urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml-fragment.rng"] = "/usr/share/xml/cnxml/schema/rng/0.7/cnxml-fragment-jing.rng"
+_urlmaps["http://cnx.rice.edu/technology/cnxml/schema/rng/0.8/cnxml-fragment.rng"] = "/usr/share/xml/cnxml/schema/rng/0.8/cnxml-fragment-jing.rng"
 
-def validate(content, url="http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml.rng"): 
+def validate(content, url="http://cnx.rice.edu/technology/cnxml/schema/rng/0.7/cnxml.rng"):
     """
     Convenience function for validating content. Public.
     'content' is a string of the XML document to be validated.
