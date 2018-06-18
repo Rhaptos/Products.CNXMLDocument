@@ -72,7 +72,7 @@ def autoUpgrade(source, **params):
     """
     version = Recognizer(source).getVersion() # if wrong, we could end up doing this on every save
     stylesheets = []
-    if version == '0.7':
+    if version in ('0.7', '0.8'):
         pass # Do nothing. 0.7 is the latest
     elif version == '0.6':
         stylesheets.append(UPGRADE_06_TO_07_XSL)
